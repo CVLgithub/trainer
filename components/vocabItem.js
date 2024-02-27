@@ -1,17 +1,18 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Pressable } from 'react-native';
 
 
-function pressed(){
-    console.log('pressed')
+function pressed(name){
+    console.log(name)
 }
 
 
-const VocabItem = ({name, Values}) => {
+const VocabItem = ({name, Values, switchView}) => {
     const itemTitle = name
     const itemValues = Values
     return(
-        <View style={styles.container} onPress={pressed}>
+        <Pressable onPress={() => switchView(name)}>
+          <View style={styles.container} >
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>{itemTitle}</Text>
             </View>
@@ -21,7 +22,9 @@ const VocabItem = ({name, Values}) => {
                 <Text>{itemValues[1]}</Text>
             </View>
             
-        </View>
+            </View>  
+        </Pressable>
+        
     )
 }
 export default VocabItem
