@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {NavigationContainer} from '@react-navigation/native';
+
 import VocabItem from './components/vocabItem'
 import * as func from './functions'
+import LoginWindow from './screens/login.js'
 
 const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full height
+
+
+let storedData = 'click me'
+let count = 0
+
+
 
 let ListOfVocabNames
 let createComponents
@@ -17,13 +27,42 @@ async function setup(){
   console.log('returned value:')
   console.log(ListOfVocabNames)
   createComponents()
-
+  
 }
+
+async function storeData(key, data) {
+  try {
+    await AsyncStorage.setItem(key, String(data));
+    console.log('Data stored successfully', count);
+  } catch (error) {
+    console.log('Error storing data: ', error);
+  }
+};
+
+async function getData(key) {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    if (value !== null) {
+      // Daten gefunden, setzen sie im State
+      console.log(`return ${value}`)
+      return value
+    } else {
+      console.log('No data found');
+    }
+  } catch (error) {
+    console.log('Error retrieving data: ', error);
+  }
+};
  
 
 export default function App() {
 
-  setup()
+  const [notLoggingIn, switchloginState] = useState(true)
+
+  const callAsyncSetup = () => {
+    setup()
+  }
+
   const [mainViewVisible, setMainViewVisible] = useState(true);
   const [activeView, setActiveView] = useState('MainView')
 
@@ -36,9 +75,12 @@ export default function App() {
   return (
     <SafeAreaView style={styles.statusbar}>
       <StatusBar style="auto"/> 
-
-      {mainViewVisible && <MainView switchView={switchView} />}
-      {!mainViewVisible && <AbfrageView name={activeView} backToMain={() => {switchView('MainView')}}/>}
+      {notLoggingIn ?  (mainViewVisible ? (
+        <MainView switchView={switchView} />
+      ) : (
+        <AbfrageView name={activeView} backToMain={() => {switchView('MainView')}} />
+      )) : (<LoginWindow/>)}
+      {mainViewVisible && callAsyncSetup()}
         
     </SafeAreaView>
     
@@ -47,6 +89,7 @@ export default function App() {
 
 //------------------------------------------
 const MainView = ({switchView}) => {
+  
   
   
   const [items, setComponents] = useState([]);
@@ -58,7 +101,7 @@ const MainView = ({switchView}) => {
     setComponents(newComponents);
     console.log('set components')
   };
-
+  
   return (
     <View style={styles.view}>
       <Text style={styles.title}>Vokabeltrainer</Text>
@@ -67,7 +110,8 @@ const MainView = ({switchView}) => {
             {items}
         </ScrollView> 
         <View style={styles.stats}>
-          <Text>2</Text>
+          <Text  onPress={storeData}>2</Text>
+          <Text  onPress={getData}>{storedData}</Text>
         </View>  
       </ScrollView>
 
@@ -112,7 +156,7 @@ const AbfrageView = ({name, backToMain}) => {
     if (showResult){
       setResult({deutsch: question.deutsch, grammatik: question.grammatik})
     } else{
-      setResult({grammatik: "click ", deutsch: "Show"})
+      setResult({grammatik: "CLICK ", deutsch: "NEXT"})
       UpdateQuestion()
     }
     
@@ -137,11 +181,19 @@ const AbfrageView = ({name, backToMain}) => {
 
         <View style={AbfrageStyles.ButtonContainer}>
           <View style={AbfrageStyles.topButtonConatiner}>
-            <Button title='richtig' style={AbfrageStyles.rightButton}/>
-            <Button title='falsch' style={AbfrageStyles.falseButton}/>
+            <View style={AbfrageStyles.button}>
+              <Button title='richtig' style={AbfrageStyles.rightButton}/>
+            </View>
+            <View style={AbfrageStyles.button}>
+              <Button title='falsch' style={AbfrageStyles.falseButton}/>
+            </View>
+            
+          </View>
+          <View style={AbfrageStyles.topButtonConatiner}>
+            <Button title='next' style={AbfrageStyles.nextButton} onPress={next}/>
           </View>
           
-          <Button title='next' style={AbfrageStyles.nextButton} onPress={next}/>
+          
         </View>
 
       </View>
@@ -206,13 +258,21 @@ const AbfrageStyles = StyleSheet.create({
   },
   topButtonConatiner: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: 'green',
+    borderColor: 'black',
+    borderWidth: 2,
+    borderRadius: 2,
   },
   rightButton: {
     backgroundColor: 'white',
   },
   falseButton: {
-    backgroundColor: 'blue',
+    backgroundColor: 'white',
   },
   nextButton: {
     flex: 1,
