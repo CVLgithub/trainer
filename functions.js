@@ -41,6 +41,7 @@ export async function apirequestGET(url, process = true, callback, req = false) 
     fetch(reqUrl)
       .then(response => {
         if (!response.ok) {
+          //console.log(response)
           throw new Error(`Network response was not ok, status: ${response.status}`);
         }
         return response.json();

@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import VocabItem from './components/vocabItem'
 import * as func from './functions'
@@ -10,6 +11,7 @@ import LoginWindow from './screens/login.js'
 
 const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full height
+
 
 
 let storedData = 'click me'
@@ -62,7 +64,7 @@ export default function App() {
   const callAsyncSetup = () => {
     setup()
   }
-
+  setup()
   const [mainViewVisible, setMainViewVisible] = useState(true);
   const [activeView, setActiveView] = useState('MainView')
 
@@ -72,15 +74,17 @@ export default function App() {
     console.log(mainViewVisible)
   }
 
+  const Stack = createNativeStackNavigator();
+
   return (
     <SafeAreaView style={styles.statusbar}>
       <StatusBar style="auto"/> 
-      {notLoggingIn ?  (mainViewVisible ? (
-        <MainView switchView={switchView} />
-      ) : (
-        <AbfrageView name={activeView} backToMain={() => {switchView('MainView')}} />
-      )) : (<LoginWindow/>)}
-      {mainViewVisible && callAsyncSetup()}
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='main'>
+          <Stack.Screen name = "main" component = {MainView} initialParams={{setName: setActiveView}}/>
+        <Stack.Screen name = "abfrage" component = {AbfrageView} initialParams={{name: activeView}}/>
+        </Stack.Navigator>
+      </NavigationContainer>
         
     </SafeAreaView>
     
@@ -88,15 +92,21 @@ export default function App() {
 }
 
 //------------------------------------------
-const MainView = ({switchView}) => {
-  
-  
+const MainView = ({ navigation, route }) => {
+
+  const { setName } = route.params;
   
   const [items, setComponents] = useState([]);
+  const switchV = (name) => {
+    setName(name)
+    console.log("------------------------------",name)
+    navigation.navigate("abfrage")
+    
+  }
 
   createComponents = () => {
     const newComponents = ListOfVocabNames.map((item, index) => (
-      <VocabItem key={index} name={item} Values={['0','1', '2']} switchView={switchView}/>
+      <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchV}/>
     ));
     setComponents(newComponents);
     console.log('set components')
@@ -121,7 +131,10 @@ const MainView = ({switchView}) => {
 
 
 
-const AbfrageView = ({name, backToMain}) => {
+const AbfrageView = ({ navigation, route }) => {
+
+  const { name } = route.params;
+
   const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
   const [list, setList] = useState(null);
   const [showResult, setShowResult] = useState(true)
@@ -164,7 +177,6 @@ const AbfrageView = ({name, backToMain}) => {
 
   return(
     <View style={AbfrageStyles.view}>
-      <Button title="Zurück" onPress={backToMain} />
       <View style={AbfrageStyles.subContainer}>
 
         <View style={AbfrageStyles.topContainer}>
