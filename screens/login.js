@@ -33,7 +33,7 @@ async function storeData(key, data) {
 
 const LoginWindow = () => {
     return(
-        <Text>login</Text>
+        <Text>Login</Text>
     )
 }
 export default LoginWindow
