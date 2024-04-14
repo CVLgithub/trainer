@@ -18,8 +18,8 @@ let currentUser
 
 export async function resolveLogin(custom){
   return new Promise(async (resolve, reject) => {
-    const user = 'test'
-    const password = '1'
+    const user = custom.username
+    const password = custom.password
     const hash = false
     console.log(user, password) 
     resolve(await apirequestPOST("login",[user,password,hash]))

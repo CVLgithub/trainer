@@ -21,34 +21,10 @@ const screenHeight = Dimensions.get('window').height; //full height
 let storedData = 'click me'
 let count = 0
 
-
-
-let ListOfVocabNames
-
-async function setup(createComponents){
-
-  console.log("Setup")
-  ListOfVocabNames = await func.resolveLogin(["test", "1"])
-  console.log('returned value:')
-  console.log(ListOfVocabNames)
-  console.log("CREATE COMPS")
-  createComponents(ListOfVocabNames)
-  
-}
-
+//const [LoginData, setLoginData] = useState({username: undefined, password: undefined})
  
 
 export default function App() {
-
-  const callAsyncSetup = () => {
-    setup()
-  }
-
-  
-  const [mainViewVisible, setMainViewVisible] = useState(true);
-  const [activeView, setActiveView] = useState('MainView')
-
-
   const Stack = createNativeStackNavigator();
 
   return (
@@ -56,9 +32,9 @@ export default function App() {
       <StatusBar style={styles.status}/> 
       <NavigationContainer>
         <Stack.Navigator initialRouteName='main'>
-          <Stack.Screen name = "main" component = {MainView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Main"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')}/> })} initialParams={{setName: setActiveView, setup: setup}}/>
-          <Stack.Screen name = "abfrage" component = {AbfrageView} options={{title: 'Abfrage', headerTitle: (props) => <Header title={props.children} /> }} initialParams={{name: activeView}}/>
-          <Stack.Screen name = "login" component = {LoginView} options={{title: 'Login', headerTitle: (props) => <Header title={props.children} /> }} />
+          <Stack.Screen name = "main" component = {MainView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Main"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')}/> })}/>
+          <Stack.Screen name = "abfrage" component = {AbfrageView} options={{title: 'Abfrage', headerTitle: (props) => <Header title={props.children} /> }}/>
+          <Stack.Screen name = "login" component = {LoginView} options={{title: 'Login', headerTitle: (props) => <Header title={props.children} initialParams={{setCredentials: "test"}}/> }} />
         </Stack.Navigator>
       </NavigationContainer>
         

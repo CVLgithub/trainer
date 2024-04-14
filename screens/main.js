@@ -10,19 +10,65 @@ import VocabItem from '../components/vocabItem'
 import * as func from '../functions'
 
 const screenWidth = Dimensions.get('window').width; //full width
-const screenHeight = Dimensions.get('window').height; //full height
+const screenHeight = Dimensions.get('window').height; //full 
 
-const MainView = ({ navigation, route }) => {
+let LoginData
 
-    const { setName } = route.params;
-    let { setup } = route.params;
+async function getData(keyArr) {
+  try {
+    let res = {}
+    for (key in keyArr){
+      const value = await AsyncStorage.getItem(key);
+      if (value !== null) {
+        // Daten gefunden, setzen sie im State
+        console.log(`return ${value}`)
+        res.key = value
+      } else {
+        console.log('No data found');
+      }
+    }
+    return res
     
+  } catch (error) {
+    console.log('Error retrieving data: ', error);
+  }
+};
+
+function LoggedIn(){
+  const data = getData(['username', 'password'])
+  if (!data.username){
+    console.log('no username')
+    return false
+  } else if (!data.password){
+    console.log('no password')
+  }
+  console.log('correct')
+  LoginData = data
+  return true
+}
+
+async function setup(createComponents){
+
+  if (!LoggedIn()){
+    return
+  }
+
+  console.log("Setup")
+  const ListOfVocabNames = await func.resolveLogin(LoginData)
+  console.log('returned value:')
+  console.log(ListOfVocabNames)
+  console.log("CREATE COMPS")
+  createComponents(ListOfVocabNames)
+  
+}
+
+const MainView = ({ navigation, route }) => { 
     const [items, setComponents] = useState([]);
+
+
     const switchV = (name) => {
-      setName(name)
       console.log("------------------------------",name)
-      navigation.navigate("abfrage")
-      
+      navigation.navigate("abfrage", {name: name})
     }
 
     const createComponents = (ListOfVocabNames) => {
@@ -46,8 +92,8 @@ const MainView = ({ navigation, route }) => {
               {items}
           </ScrollView> 
           <View style={styles.stats}>
-            <Text  onPress={console.log("store data")}>2</Text>
-            <Text  onPress={console.log("get data")}>data</Text>
+            <Text>2</Text>
+            <Text>data</Text>
           </View>  
         </ScrollView>
   

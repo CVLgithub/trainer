@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as func from '../functions'
 
@@ -31,9 +31,34 @@ async function storeData(key, data) {
   };
 
 
-const LoginWindow = () => {
+const LoginWindow = ({ navigation, route }) => {
+    //const { setCredentials } = route.params;
+
+    const [username, onChangeUsername] = React.useState('');
+    const [password, onChangePassword] = React.useState('');
     return(
-        <Text>Login</Text>
+        <View>
+           <TextInput
+                style={styles.username}
+                onChangeText={onChangeUsername}
+                value={username}
+                placeholder="username"
+            />
+
+            <Text>{username}</Text> 
+
+            <TextInput
+                style={styles.username}
+                onChangeText={onChangePassword}
+                value={password}
+                placeholder="Password"
+            />
+
+            <Text>{password}</Text>
+
+            <Button title='Submit' onPress={() => {navigation.navigate("main")}}></Button>
+        </View>
+        
     )
 }
 export default LoginWindow
@@ -48,19 +73,10 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
     },
-    titleContainer: {
-        marginTop: 5,
-        alignSelf: 'stretch',
-        borderBottomColor: 'black',
-        borderBottomWidth: 1,
-    },
-    title: {
-        alignSelf: 'center',
-        fontSize: 20,
-    },
-    subContainer: {
-        backgroundColor: 'yellow',
-        flex: 1,
-        marginBottom: 12,
-    },
+    username: {
+        height: 40,
+        borderWidth: 4,
+        borderColor: 'black',
+        borderRadius: 2
+    }
 })

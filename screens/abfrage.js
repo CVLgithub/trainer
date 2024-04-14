@@ -13,7 +13,6 @@ const screenHeight = Dimensions.get('window').height; //full height
 
 
 const AbfrageView = ({ navigation, route }) => {
-
     const { name } = route.params;
   
     const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
