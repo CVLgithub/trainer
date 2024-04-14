@@ -5,11 +5,33 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as func from '../functions'
 
 
-const LoginWindow = ({func}) => {
-    let show = true
-    function test() {
-        show = !show
+
+async function storeData(key, data) {
+    try {
+      await AsyncStorage.setItem(key, String(data));
+      console.log('Data stored successfully', count);
+    } catch (error) {
+      console.log('Error storing data: ', error);
     }
+  };
+  
+  async function getData(key) {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      if (value !== null) {
+        // Daten gefunden, setzen sie im State
+        console.log(`return ${value}`)
+        return value
+      } else {
+        console.log('No data found');
+      }
+    } catch (error) {
+      console.log('Error retrieving data: ', error);
+    }
+  };
+
+
+const LoginWindow = () => {
     return(
         <Text>login</Text>
     )

@@ -41,7 +41,6 @@ const MainView = ({ navigation, route }) => {
     
     return (
       <View style={styles.view}>
-        <Text style={styles.title}>Vokabeltrainer</Text>
         <ScrollView style={styles.ScrollView}>
           <ScrollView style={styles.selection} horizontal>
               {items}

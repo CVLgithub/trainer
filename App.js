@@ -7,9 +7,11 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import VocabItem from './components/vocabItem'
 import * as func from './functions'
-import LoginWindow from './screens/login.js'
+import LoginView from './screens/login.js'
 import AbfrageView from './screens/abfrage.js'
 import MainView from './screens/main.js'
+import Header from './components/header.js'
+import UserIcon from './components/usericon.js'
 
 const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full height
@@ -34,29 +36,6 @@ async function setup(createComponents){
   
 }
 
-async function storeData(key, data) {
-  try {
-    await AsyncStorage.setItem(key, String(data));
-    console.log('Data stored successfully', count);
-  } catch (error) {
-    console.log('Error storing data: ', error);
-  }
-};
-
-async function getData(key) {
-  try {
-    const value = await AsyncStorage.getItem(key);
-    if (value !== null) {
-      // Daten gefunden, setzen sie im State
-      console.log(`return ${value}`)
-      return value
-    } else {
-      console.log('No data found');
-    }
-  } catch (error) {
-    console.log('Error retrieving data: ', error);
-  }
-};
  
 
 export default function App() {
@@ -77,8 +56,9 @@ export default function App() {
       <StatusBar style={styles.status}/> 
       <NavigationContainer>
         <Stack.Navigator initialRouteName='main'>
-          <Stack.Screen name = "main" component = {MainView} initialParams={{setName: setActiveView, setup: setup}}/>
-        <Stack.Screen name = "abfrage" component = {AbfrageView} initialParams={{name: activeView}}/>
+          <Stack.Screen name = "main" component = {MainView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Main"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')}/> })} initialParams={{setName: setActiveView, setup: setup}}/>
+          <Stack.Screen name = "abfrage" component = {AbfrageView} options={{title: 'Abfrage', headerTitle: (props) => <Header title={props.children} /> }} initialParams={{name: activeView}}/>
+          <Stack.Screen name = "login" component = {LoginView} options={{title: 'Login', headerTitle: (props) => <Header title={props.children} /> }} />
         </Stack.Navigator>
       </NavigationContainer>
         
