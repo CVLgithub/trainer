@@ -18,11 +18,12 @@ async function getData(keyArr) {
   try {
     let res = {}
     for (key in keyArr){
-      const value = await AsyncStorage.getItem(key);
+      console.log('trying', keyArr[key])
+      const value = await AsyncStorage.getItem(keyArr[key]);
       if (value !== null) {
         // Daten gefunden, setzen sie im State
         console.log(`return ${value}`)
-        res.key = value
+        res[String(keyArr[key])] = value
       } else {
         console.log('No data found');
       }
@@ -34,13 +35,20 @@ async function getData(keyArr) {
   }
 };
 
-function LoggedIn(){
-  const data = getData(['username', 'password'])
+async function LoggedIn(){
+  const data = await getData(['username', 'hash'])
+  console.log(data)
   if (!data.username){
     console.log('no username')
     return false
-  } else if (!data.password){
-    console.log('no password')
+  } else if (!data.hash){
+    console.log('no hash')
+  }
+  if (data.username == "undefined"){
+    console.log('no username')
+    return false
+  } else if (data.hash == "undefined"){
+    console.log('no hash')
   }
   console.log('correct')
   LoginData = data
@@ -49,7 +57,8 @@ function LoggedIn(){
 
 async function setup(createComponents){
 
-  if (!LoggedIn()){
+  if (!await LoggedIn()){
+    createComponents([])
     return
   }
 
@@ -62,9 +71,18 @@ async function setup(createComponents){
   
 }
 
-const MainView = ({ navigation, route }) => { 
+const MainView = ({ navigation, route}) => { 
+  console.log('main view')
     const [items, setComponents] = useState([]);
-
+    let value
+    try {
+      console.log('value true')
+      value = route.params
+      console.log('params:',route.params)
+    } catch {
+      console.log('value undefined')
+      value = false
+    }
 
     const switchV = (name) => {
       console.log("------------------------------",name)
@@ -80,6 +98,15 @@ const MainView = ({ navigation, route }) => {
       setComponents(newComponents);
       console.log('set components')
     }
+
+    /* console.log('value: ',value)
+    if (value){
+      //setComponents()
+      setup(createComponents)
+    } */
+    useEffect(() => {
+      setup(createComponents);
+  }, [value]);
   
     useEffect(() => {
         setup(createComponents);

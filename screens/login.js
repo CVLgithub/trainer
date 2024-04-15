@@ -2,61 +2,90 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as func from '../functions'
-
+import * as func from '../functions.js'
 
 
 async function storeData(key, data) {
-    try {
-      await AsyncStorage.setItem(key, String(data));
-      console.log('Data stored successfully', count);
-    } catch (error) {
-      console.log('Error storing data: ', error);
-    }
-  };
-  
-  async function getData(key) {
-    try {
-      const value = await AsyncStorage.getItem(key);
-      if (value !== null) {
-        // Daten gefunden, setzen sie im State
-        console.log(`return ${value}`)
-        return value
-      } else {
-        console.log('No data found');
-      }
-    } catch (error) {
-      console.log('Error retrieving data: ', error);
-    }
-  };
+  try {
+    await AsyncStorage.setItem(String(key), String(data));
+    console.log('Data stored successfully', key, data);
+  } catch (error) {
+    console.log('Error storing data: ', error);
+  }
+};
 
+async function getData(key, callback) {
+try {
+  const value = await AsyncStorage.getItem(key);
+  if (value !== null) {
+    // Daten gefunden, setzen sie im State
+    console.log(`return ${value}`)
+    callback(value)
+  } else {
+    console.log('No data found');
+    return 'not logged in'
+  }
+} catch (error) {
+  console.log('Error retrieving data: ', error);
+  return 'error'
+}
+};
+
+
+async function createHash(input, callback){
+  const hash = await func.createHash(input.username, input.password)
+  console.log('hash----', hash)
+  store({username: input.username, hash: hash}, callback)
+}
+
+
+
+function store(input, callback){
+  for (i in input){
+    storeData(i, input[i])
+  }
+  callback()
+}
 
 const LoginWindow = ({ navigation, route }) => {
     //const { setCredentials } = route.params;
 
-    const [username, onChangeUsername] = React.useState('');
-    const [password, onChangePassword] = React.useState('');
+    const [username, onChangeUsername] = useState('');
+    const [password, onChangePassword] = useState('');
+    const [user, setUser] = useState('test')
+    const callback = () => {console.log('callbackrun'), navigation.navigate("main", Math.random())}
+
+
+    useEffect(() => {
+      getData('username', setUser);
+    }, []);
+
+
     return(
         <View>
-           <TextInput
-                style={styles.username}
+          {user != 'undefined' && <Text style = {styles.text}> logged in as: '{user}'</Text>}
+          <View style = {styles.inputContainer}>
+            <TextInput
+                style={styles.TextInput}
                 onChangeText={onChangeUsername}
                 value={username}
                 placeholder="username"
             />
-
-            <Text>{username}</Text> 
-
             <TextInput
-                style={styles.username}
+                style={styles.TextInput}
                 onChangeText={onChangePassword}
                 value={password}
                 placeholder="Password"
             />
-
-            <Text>{password}</Text>
-
-            <Button title='Submit' onPress={() => {navigation.navigate("main")}}></Button>
+          </View>
+            <View style  = {styles.buttonContainer}>
+              <Button title='Submit' style = {styles.Button} onPress={() => {createHash({username: username, password: password},callback)}}></Button>
+              <Button title='Log out' style = {styles.Button} onPress={() => {store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>            
+            </View>
+            
+            
+            
+            
         </View>
         
     )
@@ -69,14 +98,28 @@ const styles = StyleSheet.create({
         width: 150,
         backgroundColor: 'green',
         margin: 10,
-        borderRadius: 15,
-        borderBottomLeftRadius: 10,
-        borderBottomRightRadius: 10,
+        borderRadius: 100
     },
-    username: {
+    TextInput: {
+        paddingLeft: 10,
         height: 40,
-        borderWidth: 4,
+        borderWidth: 2,
         borderColor: 'black',
-        borderRadius: 2
+        borderRadius: 2,
+        width: 150,
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      padding: 20
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    Button: {
+    },
+    text: {
+      textAlign: 'center',
     }
 })

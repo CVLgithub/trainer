@@ -23,7 +23,7 @@ const AbfrageView = ({ navigation, route }) => {
     useEffect(() => {
       const fetchData = async () => {
         console.log('req func');
-        const response = await func.apirequestGET("vocab/table", false, undefined, `table=${name}&hash=1&user=test`);
+        const response = await func.apirequestGET("vocab/table", false, undefined, `table=${name}`);
         console.log('Response:', response);
         setList(response);
         const initialQuestion = response.find(item => item.id === 0);

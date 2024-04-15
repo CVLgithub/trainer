@@ -1,3 +1,5 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export function test(){
     console.log("test from func")
 }
@@ -13,15 +15,46 @@ let changeInVocab
 let active
 let currentUser 
 
+async function getData(keyArr) {
+  try {
+    let res = {}
+    for (key in keyArr){
+      console.log('trying', keyArr[key])
+      const value = await AsyncStorage.getItem(keyArr[key]);
+      if (value !== null) {
+        // Daten gefunden, setzen sie im State
+        console.log(`return ${value}`)
+        res[String(keyArr[key])] = value
+      } else {
+        console.log('No data found');
+      }
+    }
+    return res
+    
+  } catch (error) {
+    console.log('Error retrieving data: ', error);
+  }
+};
+
+
+
+export async function createHash(username, password){
+  return new Promise(async (resolve, reject) => {
+    console.log(username, password) 
+    const response = (await apirequestPOST("login",[username,password,false], false))[2]
+    const hash = response.substring(response.search('@') + 1)
+    resolve(hash)
+  })
+}
 
 
 
 export async function resolveLogin(custom){
   return new Promise(async (resolve, reject) => {
     const user = custom.username
-    const password = custom.password
-    const hash = false
-    console.log(user, password) 
+    const password = false
+    const hash = custom.hash
+    console.log(user, password, hash) 
     resolve(await apirequestPOST("login",[user,password,hash]))
   })
 }
@@ -33,10 +66,16 @@ export async function apirequestGET(url, process = true, callback, req = false) 
   return new Promise(async (resolve, reject) => {
     //resolve('test')
     let reqUrl = `https://inka.mywire.org/api/${url}` 
-    console.log(`Get request to url: ${reqUrl}, with content: ${req}`)
+    
     if (req){
-      reqUrl = reqUrl + "?" + String(req)
+      if (url == "vocab/table"){
+        const storage = await getData(['username', 'hash'])
+      reqUrl = reqUrl + "?" + String(req) + `&hash=${storage.hash}&user=${storage.username}`
+      } else {
+        reqUrl = reqUrl + "?" + String(req)
+      }
     }
+    console.log(`Get request to url: ${reqUrl}, with content: ${req}`)
 
     fetch(reqUrl)
       .then(response => {
@@ -70,7 +109,7 @@ export async function apirequestGET(url, process = true, callback, req = false) 
 }
 
 //Api Post function
-async function apirequestPOST(url, content) {
+async function apirequestPOST(url, content, autoGetReq = true) {
   return new Promise(async (resolve, reject) => {
     console.log(`Post request to url: ${url}, with content: ${content}`)
     fetch(`https://inka.mywire.org/api/${url}`, {
@@ -88,6 +127,10 @@ async function apirequestPOST(url, content) {
 
 
           //Antwort verarbeiten
+          if (!autoGetReq) {
+            resolve(responseValue)
+            return
+          }
 
           if (url == "login"){
             resolve(await processlogin(responseValue, content))
@@ -137,34 +180,20 @@ async function processlogin(response, content){
       //console.log("currentuser is set to: " + currentUser)
 
       
-      resolve(await getTables())
+      resolve(await getTables(content))
     })
   })
 }
 
-async function checkLogin() {
-  return new Promise(async(resolve, reject) => {
-    console.log("check cookies")
-    //gettting hash from cookies
-    const cookieRes = await getCookie("hash")
-    console.log(cookieRes)
 
-    //trying Login with cookie
-    if (cookieRes[0]) {
-      const cookieValues = cookieRes[1]
-      await resolveLogin([cookieValues[0].substring(5), cookieValues[1]])
-    } 
-    resolve(cookieRes[0])
-    console.log("console:" + cookieRes[1]) 
-  })
-}
-
-async function getTables(){
+async function getTables(content){
   return new Promise(async (resolve, reject) => {
     console.log("get tables called")
-    resolve(await apirequestGET("vocab/tables", false, undefined, `userName=test&password=1`)) 
+    resolve(await apirequestGET("vocab/tables", false, undefined, `userName=${content[0]}&password=${content[1]}`)) 
   })
 }
+
+
 
 
 
