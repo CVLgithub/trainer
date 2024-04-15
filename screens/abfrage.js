@@ -12,7 +12,16 @@ const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full height
 
 
+
+
+
+
 const AbfrageView = ({ navigation, route }) => {
+  function save(){
+    console.log('-----------------saved--------------')
+    console.log(list)
+    func.handleSave(name, list)
+  }
     const { name } = route.params;
   
     const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
@@ -21,10 +30,13 @@ const AbfrageView = ({ navigation, route }) => {
     const [result, setResult] = useState({grammatik: "click ", deutsch: "Show"})
   
     useEffect(() => {
+      navigation.setOptions({
+        headerRight: () => <Button onPress={() => save(list)} title='save'/>
+      })
       const fetchData = async () => {
         console.log('req func');
         const response = await func.apirequestGET("vocab/table", false, undefined, `table=${name}`);
-        console.log('Response:', response);
+        console.log('Response:');
         setList(response);
         const initialQuestion = response.find(item => item.id === 0);
         setQuestion(initialQuestion);
@@ -35,11 +47,12 @@ const AbfrageView = ({ navigation, route }) => {
   
     const UpdateQuestion = () => {
       console.log("update question");
-      console.log(list);
+      //console.log(list);
       const nextQuestion = list.find(item => item.id === question.id + 1);
       if (nextQuestion) {
         setQuestion(nextQuestion);
       } else {
+        save(list)
         console.log('No next question available');
       }
     };
@@ -49,10 +62,21 @@ const AbfrageView = ({ navigation, route }) => {
       if (showResult){
         setResult({deutsch: question.deutsch, grammatik: question.grammatik})
       } else{
-        setResult({grammatik: "CLICK ", deutsch: "NEXT"})
+        setResult({grammatik: "CLICK ", deutsch: "SHOW"})
         UpdateQuestion()
       }
-      
+    }
+
+    const right = () => {
+      console.log("richtig")
+      question.learned += 1
+      console.log(question.learned)
+    }
+
+    const wrong = () => {
+      question.learned -= 1
+      console.log("falsch")
+      console.log(question)
     }
   
     return(
@@ -74,15 +98,15 @@ const AbfrageView = ({ navigation, route }) => {
           <View style={AbfrageStyles.ButtonContainer}>
             <View style={AbfrageStyles.topButtonConatiner}>
               <View style={AbfrageStyles.button}>
-                <Button title='richtig' style={AbfrageStyles.rightButton}/>
+                <Button title='richtig' style={AbfrageStyles.rightButton} onPress={right}/>
               </View>
               <View style={AbfrageStyles.button}>
-                <Button title='falsch' style={AbfrageStyles.falseButton}/>
+                <Button title='falsch' style={AbfrageStyles.falseButton} onPress={wrong}/>
               </View>
               
             </View>
             <View style={AbfrageStyles.topButtonConatiner}>
-              <Button title='next' style={AbfrageStyles.nextButton} onPress={next}/>
+              <Button title='Show' style={AbfrageStyles.nextButton} onPress={next}/>
             </View>
             
             
@@ -162,8 +186,7 @@ button: {
     borderRadius: 2,
 },
 rightButton: {
-    backgroundColor: 'white',
-},
+    backgroundColor: 'white',},
 falseButton: {
     backgroundColor: 'white',
 },

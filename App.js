@@ -33,8 +33,8 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator initialRouteName='main'>
           <Stack.Screen name = "main" component = {MainView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Main"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')}/> })}/>
-          <Stack.Screen name = "abfrage" component = {AbfrageView} options={{title: 'Abfrage', headerTitle: (props) => <Header title={props.children} /> }}/>
-          <Stack.Screen name = "login" component = {LoginView} options={{title: 'Login', headerTitle: (props) => <Header title={props.children}/> }} />
+          <Stack.Screen name = "abfrage" component = {AbfrageView} options={{title: 'Abfrage', headerTitle: (props) => <Header title={props.children}/>, headerRight: () => <Text>save</Text>}}/>
+          <Stack.Screen name = "login" component = {LoginView} options={{title: 'Login', headerTitle: (props) => <Header title={props.children}/>}}/>
         </Stack.Navigator>
       </NavigationContainer>
         

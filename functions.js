@@ -15,6 +15,12 @@ let changeInVocab
 let active
 let currentUser 
 
+export async function handleSave(tablename, table) {
+  const storage = await getData(['username', 'hash'])
+  url = `vocab/table/save?user=${storage.username}&hash=${storage.hash}&table=${tablename}`
+  apirequestPOST(url, table)
+}
+
 async function getData(keyArr) {
   try {
     let res = {}
@@ -313,7 +319,6 @@ async function processRegister(response){
 function save(){
   const notifyDiv = document.getElementById("notifyHeader")
   console.log("saved")
-  handleSave()
   notifyDiv.innerHTML = "Auto Saved"
   setTimeout(function(){console.log("delete notification"); notifyDiv.innerHTML = ""}, 3000);
 }
@@ -326,13 +331,6 @@ function setAutoSave(time){
   autoSave = setTimeout(save, time*60000);
 }
 
-async function handleSave(){
-  document.getElementById("saveReminder").style.display = "none"
-  console.log("request ->")
-  const hash = (await getCookie("hash"))[1][1]
-  url = `vocab/table/save?user=${currentUser}&hash=${hash}&table=${currentTable}`
-  apirequestPOST(url, currentTableData)
-}
 
 
 async function start(){
