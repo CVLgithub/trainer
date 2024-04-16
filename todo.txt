@@ -1,3 +1,5 @@
 1. Abfrage
 2. upload
 3. design
+(4. Learned ab ... einstellung
+ 5. % learned anzeigen
