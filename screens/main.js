@@ -7,6 +7,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import VocabItem from '../components/vocabItem'
+import UploadCard from '../components/uploadCard'
 import * as func from '../functions'
 
 const screenWidth = Dimensions.get('window').width; //full width
@@ -92,9 +93,15 @@ const MainView = ({ navigation, route}) => {
     const createComponents = (ListOfVocabNames) => {
       console.log("called create")
       console.log(ListOfVocabNames)
-      const newComponents = ListOfVocabNames.map((item, index) => (
-        <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchV}/>
-      ));
+      const newComponents = () =>{
+        let comps = ListOfVocabNames.map((item, index) => (
+         <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchV}/>
+        ))
+        if (comps.length >= 1){
+          comps.push(<UploadCard key = {ListOfVocabNames.lenght + 1} switchView = {() => {navigation.navigate('upload')}}></UploadCard>)
+        }
+        return comps
+      } 
       setComponents(newComponents);
       console.log('set components')
     }
