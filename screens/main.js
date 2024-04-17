@@ -9,6 +9,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import VocabItem from '../components/vocabItem'
 import UploadCard from '../components/uploadCard'
 import * as func from '../functions'
+import PopUp from '../components/PopUp';
 
 const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full 
@@ -16,6 +17,7 @@ const screenHeight = Dimensions.get('window').height; //full
 let LoginData
 
 async function getData(keyArr) {
+  console.log('get data called')
   try {
     let res = {}
     for (key in keyArr){
@@ -56,9 +58,12 @@ async function LoggedIn(){
   return true
 }
 
-async function setup(createComponents){
+async function setup(createComponents, goToLogin, setPopUp){
+  console.log('setup called ----------')
 
   if (!await LoggedIn()){
+    console.log("poPup!!!!!");
+    setPopUp(<PopUp title = 'Login' button1={{text: 'Login', func: goToLogin}} button2={{text: 'cancel', func: () =>{console.log("cancel PopUp")}}} deleteSelf={setPopUp}></PopUp>)
     createComponents([])
     return
   }
@@ -73,6 +78,7 @@ async function setup(createComponents){
 }
 
 const MainView = ({ navigation, route}) => { 
+  const [popUp, setPopUp] = useState()
   console.log('main view')
     const [items, setComponents] = useState([]);
     let value
@@ -112,12 +118,8 @@ const MainView = ({ navigation, route}) => {
       setup(createComponents)
     } */
     useEffect(() => {
-      setup(createComponents);
+      setup(createComponents, () => navigation.navigate("login"), setPopUp);
   }, [value]);
-  
-    useEffect(() => {
-        setup(createComponents);
-    }, []);
     
     return (
       <View style={styles.view}>
@@ -131,6 +133,7 @@ const MainView = ({ navigation, route}) => {
           </View>  
         </ScrollView>
   
+      {popUp}
       </View>
     );
 };

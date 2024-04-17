@@ -13,6 +13,7 @@ import MainView from './screens/main.js'
 import Header from './components/header.js'
 import UserIcon from './components/usericon.js'
 import UploadView from './screens/upload.js'
+import PopUp from './components/PopUp.js';
 
 const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full height
@@ -39,7 +40,8 @@ export default function App() {
           <Stack.Screen name = "upload" component = {UploadView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Upload"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')}/> })}/>
         </Stack.Navigator>
       </NavigationContainer>
-        
+      
+      
     </SafeAreaView>
     
   );

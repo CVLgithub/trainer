@@ -7,6 +7,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import VocabItem from '../components/vocabItem'
 import * as func from '../functions'
+import PopUp from '../components/PopUp';
 
 const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full height
@@ -17,105 +18,117 @@ const screenHeight = Dimensions.get('window').height; //full height
 
 
 const AbfrageView = ({ navigation, route }) => {
+  const [popUp, setPopUp] = useState()
+
   function save(){
     console.log('-----------------saved--------------')
     console.log(list)
     func.handleSave(name, list)
   }
-    const { name } = route.params;
-  
-    const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
-    const [list, setList] = useState(null);
-    const [showResult, setShowResult] = useState(true)
-    const [result, setResult] = useState({grammatik: "click ", deutsch: "Show"})
-  
-    useEffect(() => {
-      navigation.setOptions({
-        headerRight: () => <Button onPress={() => save(list)} title='save'/>
-      })
-      const fetchData = async () => {
-        console.log('req func');
-        const response = await func.apirequestGET("vocab/table", false, undefined, `table=${name}`);
-        console.log('Response:');
-        setList(response);
-        const initialQuestion = response.find(item => item.id === 0);
-        setQuestion(initialQuestion);
-      };
-  
-      fetchData();
-    }, [name]);
-  
-    const UpdateQuestion = () => {
-      console.log("update question");
-      //console.log(list);
-      const nextQuestion = list.find(item => item.id === question.id + 1);
-      if (nextQuestion) {
-        setQuestion(nextQuestion);
-      } else {
-        save(list)
-        console.log('No next question available');
-      }
-    };
-  
-    const next = () => {
-      setShowResult(!showResult)
-      if (showResult){
-        setResult({deutsch: question.deutsch, grammatik: question.grammatik})
-      } else{
-        setResult({grammatik: "CLICK ", deutsch: "SHOW"})
-        UpdateQuestion()
-      }
-    }
 
-    const right = () => {
+  const { name } = route.params;
+
+  const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
+  const [list, setList] = useState(null);
+  const [showResult, setShowResult] = useState(true)
+  const [result, setResult] = useState({grammatik: "click ", deutsch: "Show"})
+
+  useEffect(() => {
+    console.log('---------------------effect run---')
+    navigation.setOptions({
+      headerRight: () => <Button onPress={() => save(list)} title='save'/>
+    })
+    const fetchData = async () => {
+      console.log('req func');
+      const response = await func.apirequestGET("vocab/table", false, undefined, `table=${name}`);
+      console.log('Response:');
+      setList(response);
+      const initialQuestion = response.find(item => item.id === 0);
+      setQuestion(initialQuestion);
+    };
+
+    fetchData();
+  }, [name]);
+
+  const UpdateQuestion = () => {
+    console.log("update question");
+    console.log(question);
+    const nextQuestion = list.find(item => item.id === question.id + 1);
+    if (nextQuestion) {
+      setQuestion(nextQuestion);
+    } else {
+      save(list)
+      setPopUp(<PopUp title = 'Finished learning' button1={{text: 'Restart', func:  () =>{setQuestion({ id: -1, latein: 'start' }); setShowResult(false)}}} button2={{text: 'Go Back', func: () =>{navigation.navigate("main")}}} deleteSelf={setPopUp}></PopUp>)
+      console.log('No next question available');
+    }
+  };
+
+  const next = () => {
+    setShowResult(!showResult)
+    if (showResult){
+      setResult({deutsch: question.deutsch, grammatik: question.grammatik})
+    } else{
+      setResult({grammatik: "CLICK ", deutsch: "SHOW"})
+      UpdateQuestion()
+    }
+  }
+
+  const right = () => {
+    if (!showResult) {
       console.log("richtig")
       question.learned += 1
       console.log(question.learned)
+      next()
     }
+  }
 
-    const wrong = () => {
+  const wrong = () => {
+    if (!showResult) {
       question.learned -= 1
       console.log("falsch")
       console.log(question)
-    }
-  
-    return(
-      <View style={AbfrageStyles.view}>
-        <View style={AbfrageStyles.subContainer}>
-  
-          <View style={AbfrageStyles.topContainer}>
-            <View style={AbfrageStyles.QuestionContainer}>
-              <Text style={AbfrageStyles.question}>{question.latein}</Text>
-            </View>
-            <View style={AbfrageStyles.resultContainer}>
-              <Text style={AbfrageStyles.resultText}>{result.grammatik}</Text>
-              <Text style={AbfrageStyles.resultText}>{result.deutsch}</Text>
-            </View>
-            
+      next()
+    }    
+  }
+
+  return(
+    <View style={AbfrageStyles.view}>
+      <View style={AbfrageStyles.subContainer}>
+
+        <View style={AbfrageStyles.topContainer}>
+          <View style={AbfrageStyles.QuestionContainer}>
+            <Text style={AbfrageStyles.question}>{question.latein}</Text>
           </View>
-  
-  
-          <View style={AbfrageStyles.ButtonContainer}>
-            <View style={AbfrageStyles.topButtonConatiner}>
-              <View style={AbfrageStyles.button}>
-                <Button title='richtig' style={AbfrageStyles.rightButton} onPress={right}/>
-              </View>
-              <View style={AbfrageStyles.button}>
-                <Button title='falsch' style={AbfrageStyles.falseButton} onPress={wrong}/>
-              </View>
-              
-            </View>
-            <View style={AbfrageStyles.topButtonConatiner}>
-              <Button title='Show' style={AbfrageStyles.nextButton} onPress={next}/>
-            </View>
-            
-            
+          <View style={AbfrageStyles.resultContainer}>
+            <Text style={AbfrageStyles.resultText}>{result.grammatik}</Text>
+            <Text style={AbfrageStyles.resultText}>{result.deutsch}</Text>
           </View>
-  
+          
         </View>
+
+
+        <View style={AbfrageStyles.ButtonContainer}>
+          <View style={AbfrageStyles.topButtonConatiner}>
+            <View style={AbfrageStyles.button}>
+              <Button title='richtig' style={AbfrageStyles.rightButton} onPress={right}/>
+            </View>
+            <View style={AbfrageStyles.button}>
+              <Button title='falsch' style={AbfrageStyles.falseButton} onPress={wrong}/>
+            </View>
+            
+          </View>
+          <View style={AbfrageStyles.topButtonConatiner}>
+            <Button title='Show' style={AbfrageStyles.nextButton} onPress={next}/>
+          </View>
+          
+          
+        </View>
+
+      {popUp}
       </View>
-      
-    )
+    </View>
+    
+  )
 }
   
 export default AbfrageView
