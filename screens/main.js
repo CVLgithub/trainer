@@ -38,7 +38,7 @@ async function getData(keyArr) {
   }
 };
 
-async function LoggedIn(){
+async function LogginDataStored(){
   const data = await getData(['username', 'hash'])
   console.log(data)
   if (!data.username){
@@ -61,7 +61,7 @@ async function LoggedIn(){
 async function setup(createComponents, goToLogin, setPopUp){
   console.log('setup called ----------')
 
-  if (!await LoggedIn()){
+  if (!await LogginDataStored()){
     console.log("poPup!!!!!");
     setPopUp(<PopUp title = 'Login' button1={{text: 'Login', func: goToLogin}} button2={{text: 'cancel', func: () =>{console.log("cancel PopUp")}}} deleteSelf={setPopUp}></PopUp>)
     createComponents([])
@@ -70,8 +70,15 @@ async function setup(createComponents, goToLogin, setPopUp){
 
   console.log("Setup")
   const ListOfVocabNames = await func.resolveLogin(LoginData)
-  console.log('returned value:')
+  console.log('returned value :')
   console.log(ListOfVocabNames)
+
+  //List empty or not logged in successfully
+  if(!ListOfVocabNames) {
+    console.log('?')
+    ListOfVocabNames = {'"index"': '"item"'}
+  }
+  console.log('??')
   console.log("CREATE COMPS")
   createComponents(ListOfVocabNames)
   
@@ -98,7 +105,7 @@ const MainView = ({ navigation, route}) => {
 
     const createComponents = (ListOfVocabNames) => {
       console.log("called create")
-      console.log(ListOfVocabNames)
+      console.log('List of Vocab:', ListOfVocabNames)
       const newComponents = () =>{
         let comps = ListOfVocabNames.map((item, index) => (
          <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchV}/>

@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FlatListComponent } from 'react-native';
 
 export function test(){
     console.log("test from func")
@@ -46,9 +47,15 @@ async function getData(keyArr) {
 
 export async function createHash(username, password){
   return new Promise(async (resolve, reject) => {
+    console.log("func.createHash called")
+    let hash = false
     console.log(username, password) 
-    const response = (await apirequestPOST("login",[username,password,false], false))[2]
-    const hash = response.substring(response.search('@') + 1)
+    const response = await apirequestPOST("login",[username,password,false], false)
+    if(response[0]){
+      console.log('set new hash')
+      hash = response[2].substring(response[2].indexOf('@') + 1)
+    }
+    console.log('function "create Hash" returns:', hash)
     resolve(hash)
   })
 }
@@ -61,7 +68,8 @@ export async function resolveLogin(custom){
     const password = false
     const hash = custom.hash
     console.log(user, password, hash) 
-    resolve(await apirequestPOST("login",[user,password,hash]))
+    const apiResult = await apirequestPOST("login",[user,password,hash])
+    resolve(apiResult)
   })
 }
 
@@ -160,15 +168,16 @@ async function apirequestPOST(url, content, autoGetReq = true) {
 
 async function processlogin(response, content){
   return new Promise(async (resolve, reject) => {
-    console.log("try loggin")
+    console.log("try loggin (ProcessLogin)")
     response.then(async data => {
       const loginSuccess = data[0]
       const responseStr = data[1]
       const responseHash = data[2]
+      console.log(data + 'Data ----------------------')
 
       if (!loginSuccess){
         console.log("couldn't login")
-        resolve()
+        resolve(false)
         return
       }
       console.log("logged in succesfully")          
@@ -185,7 +194,7 @@ async function processlogin(response, content){
 
       //console.log("currentuser is set to: " + currentUser)
 
-      
+      console.log('content for getTables ----------------: ', content)
       resolve(await getTables(content))
     })
   })
@@ -195,7 +204,7 @@ async function processlogin(response, content){
 async function getTables(content){
   return new Promise(async (resolve, reject) => {
     console.log("get tables called")
-    resolve(await apirequestGET("vocab/tables", false, undefined, `userName=${content[0]}&password=${content[1]}`)) 
+    resolve(await apirequestGET("vocab/tables", false, undefined, `userName=${content[0]}&password=${content[1]}&hash=${content[2]}`)) 
   })
 }
 

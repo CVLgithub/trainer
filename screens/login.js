@@ -34,8 +34,11 @@ try {
 
 async function createHash(input, callback){
   const hash = await func.createHash(input.username, input.password)
-  console.log('hash----', hash)
-  store({username: input.username, hash: hash}, callback)
+  if(hash){
+    store({username: input.username, hash: hash}, callback)
+  }
+  console.log("'createHash in Login': NO VALID HASH - nothing stored")
+  
 }
 
 
