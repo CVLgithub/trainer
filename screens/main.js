@@ -10,6 +10,7 @@ import VocabItem from '../components/vocabItem'
 import UploadCard from '../components/uploadCard'
 import * as func from '../functions'
 import PopUp from '../components/PopUp';
+import UserIcon from '../components/usericon.js'
 
 const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full 
@@ -58,14 +59,26 @@ async function LogginDataStored(){
   return true
 }
 
-async function setup(createComponents, goToLogin, setPopUp){
+async function setup(createComponents, goToLogin, setPopUp, navigation){
   console.log('setup called ----------')
 
   if (!await LogginDataStored()){
     console.log("poPup!!!!!");
+    
+    
+    console.log('setpopUp')
     setPopUp(<PopUp title = 'Login' button1={{text: 'Login', func: goToLogin}} button2={{text: 'cancel', func: () =>{console.log("cancel PopUp")}}} deleteSelf={setPopUp}></PopUp>)
+    console.log('after pop up ------')
     createComponents([])
+    console.log('after create Comps')
+    navigation.setOptions({
+      headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={false}/>,
+    });
     return
+  } else {
+    navigation.setOptions({
+      headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={true}/>,
+    });
   }
 
   console.log("Setup")
@@ -87,62 +100,63 @@ async function setup(createComponents, goToLogin, setPopUp){
 const MainView = ({ navigation, route}) => { 
   const [popUp, setPopUp] = useState()
   console.log('main view')
-    const [items, setComponents] = useState([]);
-    let value
-    try {
-      console.log('value true')
-      value = route.params
-      console.log('params:',route.params)
-    } catch {
-      console.log('value undefined')
-      value = false
-    }
+  const [items, setComponents] = useState([]);
+  let value
+  try {
+    console.log('value true')
+    value = route.params
+    console.log('params:',route.params)
+  } catch {
+    console.log('value undefined')
+    value = false
+  }
 
-    const switchV = (name) => {
-      console.log("------------------------------",name)
-      navigation.navigate("abfrage", {name: name})
-    }
+  const switchV = (name) => {
+    console.log("------------------------------",name)
+    navigation.navigate("abfrage", {name: name})
+  }
 
-    const createComponents = (ListOfVocabNames) => {
-      console.log("called create")
-      console.log('List of Vocab:', ListOfVocabNames)
-      const newComponents = () =>{
-        let comps = ListOfVocabNames.map((item, index) => (
-         <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchV}/>
-        ))
-        if (comps.length >= 1){
-          comps.push(<UploadCard key = {ListOfVocabNames.lenght + 1} switchView = {() => {navigation.navigate('upload')}}></UploadCard>)
-        }
-        return comps
-      } 
-      setComponents(newComponents);
-      console.log('set components')
-    }
+  const createComponents = (ListOfVocabNames) => {
+    console.log("called create")
+    console.log('List of Vocab:', ListOfVocabNames)
+    const newComponents = () =>{
+      let comps = ListOfVocabNames.map((item, index) => (
+        <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchV}/>
+      ))
+      if (comps.length >= 1){
+        comps.push(<UploadCard key = {ListOfVocabNames.lenght + 1} switchView = {() => {navigation.navigate('upload')}}></UploadCard>)
+      }
+      return comps
+    } 
+    setComponents(newComponents);
+    console.log('set components')
+  }
 
-    /* console.log('value: ',value)
-    if (value){
-      //setComponents()
-      setup(createComponents)
-    } */
-    useEffect(() => {
-      setup(createComponents, () => navigation.navigate("login"), setPopUp);
+  /* console.log('value: ',value)
+  if (value){
+    //setComponents()
+    setup(createComponents)
+  } */
+  useEffect(() => {
+    console.log("---------------------> EFFECT CALLED")
+    setup(createComponents, () => navigation.navigate("login"), setPopUp, navigation);
   }, [value]);
-    
-    return (
-      <View style={styles.view}>
-        <ScrollView style={styles.ScrollView}>
-          <ScrollView style={styles.selection} horizontal>
-              {items}
-          </ScrollView> 
-          <View style={styles.stats}>
-            <Text>2</Text>
-            <Text>data</Text>
-          </View>  
-        </ScrollView>
   
-      {popUp}
-      </View>
-    );
+  return (
+    <View style={styles.view}>
+      <ScrollView style={styles.ScrollView}>
+        <ScrollView style={styles.selection} horizontal>
+            {items}
+        </ScrollView> 
+        <View style={styles.stats}>
+          <Text>2</Text>
+          <Text>data</Text>
+        </View>  
+      </ScrollView>
+
+    {popUp}
+    </View>
+  );
 };
   
   

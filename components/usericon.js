@@ -1,27 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, View, Pressable, Button } from 'react-native';
+import { SymbolView, SymbolViewProps, SFSymbol } from 'expo-symbols';
+
+
 
 
 const screenWidth = Dimensions.get('window').width; //full width
 
 const user = {
-    lockedIn: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.b61rHwfyvldBI6kQRI78jgHaHa%26pid%3DApi&f=1&ipt=1d9777ef62e238400fb478fa73fae41906bf6a280f616a232573b517257fd5bf&ipo=images',
-    notLoggedIn : 'https://cdn-icons-png.flaticon.com/128/3914/3914263.png'
+    true : ['person.crop.circle.fill', ['white', 'white'], 'palette'],
+    false : ['person.crop.circle.badge.exclamationmark.fill', ['red', 'black'], 'palette']
 }
-const login = () => {console.log("user-------------------------------------------")}
 
-const UserIcon = ( {func}) => {
+
+const UserIcon = ( {func, loginState}) => {
+    console.log('try icon')
+    console.log('usericon:', loginState)
     return (
         <Pressable style={styles.iconbutton} onPress={() => func()} pointerEvents="auto">
-            <Image
-                style={styles.icon}
-                source={{
-                    uri: user.lockedIn,
-                }}
-            />  
-        </Pressable>      
+            <SymbolView name={user[loginState][0]} style={styles.symbol} colors={user[loginState][1]} type={user[loginState][2]}/>
+        </Pressable>
     );
 };
+
 
 export default UserIcon;
 
@@ -36,5 +37,10 @@ const styles = StyleSheet.create({
     iconbutton: {
         zIndex: 1,
         color: 'black'
-    }
+    },
+    symbol: {
+        width: iconSize,
+        height: iconSize,
+        marginTop: 2,
+      },
 });

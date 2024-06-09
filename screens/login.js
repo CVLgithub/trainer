@@ -3,6 +3,14 @@ import { StatusBar } from 'expo-status-bar';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as func from '../functions.js'
+import { Slider, Icon } from "@rneui/base";
+import { SymbolView, SymbolViewProps, SFSymbol } from 'expo-symbols';
+
+const screenHeight = Dimensions.get('window').height; //full height
+
+const Row = ({ children }) => (
+  <View style={styles.row}>{children}</View>
+)
 
 
 async function storeData(key, data) {
@@ -51,57 +59,102 @@ function store(input, callback){
 }
 
 const LoginWindow = ({ navigation, route }) => {
-    //const { setCredentials } = route.params;
+  //const { setCredentials } = route.params;
 
-    const [username, onChangeUsername] = useState('');
-    const [password, onChangePassword] = useState('');
-    const [user, setUser] = useState('test')
-    const callback = () => {console.log('callbackrun'), navigation.navigate("main", Math.random())}
+  const [username, onChangeUsername] = useState('');
+  const [password, onChangePassword] = useState('');
+  const [user, setUser] = useState('test')
+  const callback = () => {console.log('callbackrun'), navigation.navigate("main", Math.random())}
+  const [learnedAt, setLearnedAt] = useState()
+
+  useEffect(() => {
+    getData('username', setUser);
+  }, []);
 
 
-    useEffect(() => {
-      getData('username', setUser);
-    }, []);
+  return(
+    <View style = {styles.container}>
+      <View style = {styles.login}>
 
+        {user != 'undefined' && <Text style = {styles.text}> logged in as: '{user}'</Text>}
 
-    return(
-        <View>
-          {user != 'undefined' && <Text style = {styles.text}> logged in as: '{user}'</Text>}
-          <View style = {styles.inputContainer}>
-            <TextInput
-                style={styles.TextInput}
-                onChangeText={onChangeUsername}
-                value={username}
-                placeholder="username"
-            />
-            <TextInput
-                style={styles.TextInput}
-                onChangeText={onChangePassword}
-                value={password}
-                placeholder="Password"
-            />
+        <View style = {styles.inputContainer}>
+          <TextInput
+              style={styles.TextInput}
+              onChangeText={onChangeUsername}
+              value={username}
+              placeholder="username"
+          />
+          <TextInput
+              style={styles.TextInput}
+              onChangeText={onChangePassword}
+              value={password}
+              placeholder="Password"
+          />
+        </View>
+
+          <View style  = {styles.buttonContainer}>
+            <Button title='Submit' style = {styles.Button} onPress={() => {createHash({username: username, password: password},callback)}}></Button>
+            <Button title='Log out' style = {styles.Button} onPress={() => {store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>            
           </View>
-            <View style  = {styles.buttonContainer}>
-              <Button title='Submit' style = {styles.Button} onPress={() => {createHash({username: username, password: password},callback)}}></Button>
-              <Button title='Log out' style = {styles.Button} onPress={() => {store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>            
-            </View>
+
+      </View>
+      
+        
+
+      <View style = {styles.Grid}>
+        
+        <View style = {styles.coloumn}>
+          <Row>
+            <Text>Gelernt ab:</Text>
             
-            
-            
-            
+          </Row>
+        </View>
+
+
+        <View style = {styles.coloumn}>
+          <Row>
+            {/* <Slider
+              animationType="timing"
+              maximumTrackTintColor="#ccc"
+              maximumValue={10}
+              minimumTrackTintColor="#222"
+              minimumValue={2}
+              allowTouchTrack
+              onSlidingComplete={(value) =>
+                setLearnedAt(value)
+              }
+              orientation="horizontal"
+              step={1}
+              style={{flex: 1, margin: 10}}
+              thumbStyle={{ height: 15, width: 15}}
+              thumbTintColor="#0c0"
+              thumbTouchSize={{ width: 8, height: 8 }}
+              trackStyle={{ height: 8, borderRadius: 1 }}
+              value={50}
+            /> */}
+          </Row>
         </View>
         
-    )
+
+      </View>
+
+      <View style = {styles.Button}>
+        <Button title = 'test' />
+      </View>
+        
+        
+        
+    </View>
+    
+  )             
 }
 export default LoginWindow
 
 const styles = StyleSheet.create({
     container: {
-        height: 200,
-        width: 150,
-        backgroundColor: 'green',
-        margin: 10,
-        borderRadius: 100
+      height: screenHeight,
+      backgroundColor: 'green',
     },
     TextInput: {
         paddingLeft: 10,
@@ -121,8 +174,41 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
     Button: {
+      flex: 1,
+      backgroundColor: 'blue'
     },
     text: {
       textAlign: 'center',
+      
+    },
+    login: {
+      //login
+    },
+    Grid: {
+      margin: 10,
+      flex: 2,
+      backgroundColor: "red",
+      flexDirection: 'row',
+    },
+    SaveButton: {
+      backgroundColor: 'black'
+    },
+    NumberInput: {
+      backgroundColor: 'green'
+    },
+    row: {
+      flexDirection: "row",
+      justifyContent: 'space-between'
+    },
+    coloumn: {
+      margin: 10,
+      backgroundColor: 'white',
+      flex: 1
     }
+    
 })
+
+
+
+
+

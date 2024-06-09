@@ -4,6 +4,8 @@ import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, P
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { SymbolView, SymbolViewProps, SFSymbol } from 'expo-symbols';
+
 
 import VocabItem from './components/vocabItem'
 import * as func from './functions'
@@ -14,6 +16,7 @@ import Header from './components/header.js'
 import UserIcon from './components/usericon.js'
 import UploadView from './screens/upload.js'
 import PopUp from './components/PopUp.js';
+
 
 const screenWidth = Dimensions.get('window').width; //full width
 const screenHeight = Dimensions.get('window').height; //full height
@@ -26,6 +29,8 @@ let count = 0
 //const [LoginData, setLoginData] = useState({username: undefined, password: undefined})
  
 
+//<UserIcon func = {() => navigation.navigate('login')}/>
+
 export default function App() {
   const Stack = createNativeStackNavigator();
 
@@ -34,7 +39,7 @@ export default function App() {
       <StatusBar style={styles.status}/> 
       <NavigationContainer>
         <Stack.Navigator initialRouteName='main'>
-          <Stack.Screen name = "main" component = {MainView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Main"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')}/> })}/>
+          <Stack.Screen name = "main" component = {MainView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Main"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={true}/> })}/> 
           <Stack.Screen name = "abfrage" component = {AbfrageView} options={{title: 'Abfrage', headerTitle: (props) => <Header title={props.children}/>, headerRight: () => <Text>save</Text>}}/>
           <Stack.Screen name = "login" component = {LoginView} options={{title: 'Login', headerTitle: (props) => <Header title={props.children}/>}}/>
           <Stack.Screen name = "upload" component = {UploadView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Upload"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')}/> })}/>

@@ -1,13 +1,13 @@
-1. Abfrage
+- register
 2. upload
-3. login pop up
+
 4. design
 (5. Learned ab ... einstellung
  6. % learned anzeigen)
 
 
-
-
+3. login pop up
+1. Abfrage
  POP-UPs
 
  Restart, go back pop-up
