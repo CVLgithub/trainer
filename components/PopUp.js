@@ -27,14 +27,18 @@ const PopUp = ({title, button1, button2, deleteSelf}) => {
             <View style={styles.buttonContainer}>
                 <Pressable
                     style={[styles.button, styles.buttonClose]}
-                    onPress={() => {setModalVisible(!modalVisible); button1['func'](); del()}}>
+                    onPress={() => {setModalVisible(!modalVisible); button1['func'](); del() }}>
                     <Text style={styles.textStyle}>{button1.text}</Text>
                 </Pressable>
-                <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => {setModalVisible(!modalVisible); button2['func'](); del() }}>
-                    <Text style={styles.textStyle}>{button2.text}</Text>
-                </Pressable>
+                {button2 ? 
+                  <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {setModalVisible(!modalVisible); button2['func'](); del()}}>
+                  <Text style={styles.textStyle}>{button2.text}</Text>
+              </Pressable>
+                    : <View></View>
+                }
+
             </View>
             
           </View>

@@ -1,5 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as DocumentPicker from 'expo-document-picker';
 import { FlatListComponent } from 'react-native';
+
+import axios from 'axios'
 
 export function test(){
     console.log("test from func")
@@ -15,6 +18,46 @@ let currentTableData
 let changeInVocab
 let active
 let currentUser 
+
+export const pickSomething = async () => {
+  const storage = await getData(['username', 'hash'])
+  try {
+    const docRes = await DocumentPicker.getDocumentAsync();
+
+    const formData = new FormData();
+    const assets = docRes.assets;
+    if (!assets) return;
+
+    const file = assets[0];
+
+    const csvFile = {
+      name: file.name.split(".")[0],
+      uri: file.uri,
+      type: file.mimeType,
+      size: file.size,
+    };
+
+    formData.append("datei", csvFile);
+
+    console.log(storage.username, storage.hash)
+    formData.append('username', storage.username);
+    formData.append('hash', storage.hash);
+
+    apiUrl = 'https://inka.mywire.org/api/upload'
+
+    const { data } = await axios.post(apiUrl, formData, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log(data);
+  } catch (error) {
+    console.log("Error while selecting file: ", error);
+  }
+};
+
+
 
 export async function handleSave(tablename, table) {
   const storage = await getData(['username', 'hash'])
@@ -61,7 +104,6 @@ export async function createHash(username, password){
 }
 
 
-
 export async function resolveLogin(custom){
   return new Promise(async (resolve, reject) => {
     const user = custom.username
@@ -72,6 +114,18 @@ export async function resolveLogin(custom){
     resolve(apiResult)
   })
 }
+
+//input format [username, password]
+export async function resolveRegister(input) {
+  return new Promise(async (resolve, reject) => {
+    console.log('Input: ', input)
+    const res = await apirequestPOST('register', input, false)
+    console.log('RESPONE----------> ', res)
+    resolve(res)
+  })
+}
+
+
 
 
 
@@ -151,9 +205,8 @@ async function apirequestPOST(url, content, autoGetReq = true) {
           }
 
           if (url == "register"){
-            //resolve(await processRegister(responseValue))
+            resolve(responseValue)
           }
-
           
         } else {
           console.error('Fehler beim Erstellen des Push-Abonnements:', response.status);
@@ -303,24 +356,6 @@ async function processList(list) {
 
 
 
-
-async function resolveRegister(){
-  return new Promise(async (resolve, reject) => {
-    const form = document.getElementById("loginForm")
-    const user = form[0].value
-    const password = form[1].value
-    console.log(user + password)
-    await apirequestPOST("register",[user,password])
-    resolve()
-  })
-}
-
-async function processRegister(response){
-  return new Promise(async (resolve, reject) => {
-    document.getElementById("loginRes").textContent = response[1]
-    resolve()
-  })
-}
 
 
 

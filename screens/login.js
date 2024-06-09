@@ -6,6 +6,8 @@ import * as func from '../functions.js'
 import { Slider, Icon } from "@rneui/base";
 import { SymbolView, SymbolViewProps, SFSymbol } from 'expo-symbols';
 
+import PopUp from '../components/PopUp';
+
 const screenHeight = Dimensions.get('window').height; //full height
 
 const Row = ({ children }) => (
@@ -41,6 +43,7 @@ try {
 
 
 async function createHash(input, callback){
+  console.log(input, '<------- Input createhash')
   const hash = await func.createHash(input.username, input.password)
   if(hash){
     store({username: input.username, hash: hash}, callback)
@@ -58,9 +61,22 @@ function store(input, callback){
   callback()
 }
 
+async function register(input, setPopUp, callback){
+  console.log('register pressed')
+  const answer = await func.resolveRegister([input.username, input.password])
+  console.log(answer)
+  if(answer){
+    createHash(input,callback)
+    return
+  }
+  setPopUp(<PopUp title = 'register Failed' button1={{text: 'cancel', func: () =>{console.log("cancel PopUp")}}} button2={undefined} deleteSelf={setPopUp}></PopUp>)
+  /* console.log("'createHash in Login': NO VALID HASH - nothing stored") */
+}
+
+
 const LoginWindow = ({ navigation, route }) => {
   //const { setCredentials } = route.params;
-
+  const [popUp, setPopUp] = useState()
   const [username, onChangeUsername] = useState('');
   const [password, onChangePassword] = useState('');
   const [user, setUser] = useState('test')
@@ -94,8 +110,9 @@ const LoginWindow = ({ navigation, route }) => {
         </View>
 
           <View style  = {styles.buttonContainer}>
-            <Button title='Submit' style = {styles.Button} onPress={() => {createHash({username: username, password: password},callback)}}></Button>
-            <Button title='Log out' style = {styles.Button} onPress={() => {store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>            
+            <Button title='Login' style = {styles.Button} onPress={() => {createHash({username: username, password: password},callback)}}></Button>
+            <Button title='Log out' style = {styles.Button} onPress={() => {store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>
+            <Button title='Register' style = {styles.Button} onPress={() => {register({username: username, password: password},setPopUp,callback)}}></Button>               
           </View>
 
       </View>
@@ -140,11 +157,11 @@ const LoginWindow = ({ navigation, route }) => {
       </View>
 
       <View style = {styles.Button}>
-        <Button title = 'test' />
+        <Button title = 'test'/>
       </View>
         
         
-        
+      {popUp}    
     </View>
     
   )             

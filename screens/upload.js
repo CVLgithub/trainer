@@ -4,7 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+
 
 import VocabItem from '../components/vocabItem'
 import UploadCard from '../components/uploadCard'
@@ -16,13 +17,14 @@ const screenHeight = Dimensions.get('window').height; //full
 
 
 const UploadView = ({ navigation, route}) => { 
-  return (
-    <View style={styles.view}>
-      <Text>data</Text>
-    </View>
-  );
+
+    return (
+        <View style={styles.view}>
+            <Button title="Pick something" onPress={func.pickSomething} />
+        </View>
+    );
 };
-  
+
   
 export default UploadView
   
