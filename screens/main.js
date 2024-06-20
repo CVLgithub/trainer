@@ -145,13 +145,10 @@ const MainView = ({ navigation, route}) => {
   return (
     <View style={styles.view}>
       <ScrollView style={styles.ScrollView}>
+        <Text style={styles.selectiontitle}>Deine Vokabeln</Text>
         <ScrollView style={styles.selection} horizontal>
             {items}
-        </ScrollView> 
-        <View style={styles.stats}>
-          <Text>2</Text>
-          <Text>data</Text>
-        </View>  
+        </ScrollView>  
       </ScrollView>
 
     {popUp}
@@ -184,8 +181,10 @@ ScrollView: {
     width: screenWidth,
     
 },
+selectiontitle: {
+  marginHorizontal: 37,
+},
 selection: {
-    backgroundColor: 'white',
     height: 230,
     marginHorizontal: 30,
     marginBottom: 45,

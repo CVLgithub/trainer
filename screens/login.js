@@ -156,9 +156,6 @@ const LoginWindow = ({ navigation, route }) => {
 
       </View>
 
-      <View style = {styles.Button}>
-        <Button title = 'test'/>
-      </View>
         
         
       {popUp}    
@@ -171,7 +168,6 @@ export default LoginWindow
 const styles = StyleSheet.create({
     container: {
       height: screenHeight,
-      backgroundColor: 'green',
     },
     TextInput: {
         paddingLeft: 10,
@@ -204,7 +200,7 @@ const styles = StyleSheet.create({
     Grid: {
       margin: 10,
       flex: 2,
-      backgroundColor: "red",
+      borderWidth: 1,
       flexDirection: 'row',
     },
     SaveButton: {
@@ -219,7 +215,6 @@ const styles = StyleSheet.create({
     },
     coloumn: {
       margin: 10,
-      backgroundColor: 'white',
       flex: 1
     }
     

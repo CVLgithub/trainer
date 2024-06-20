@@ -31,7 +31,7 @@ const AbfrageView = ({ navigation, route }) => {
   const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
   const [list, setList] = useState(null);
   const [showResult, setShowResult] = useState(true)
-  const [result, setResult] = useState({grammatik: "click ", deutsch: "Show"})
+  const [result, setResult] = useState({grammatik: "CLICK ", deutsch: "SHOW"})
 
   useEffect(() => {
     console.log('---------------------effect run---')
@@ -113,12 +113,14 @@ const AbfrageView = ({ navigation, route }) => {
               <Button title='richtig' style={AbfrageStyles.rightButton} onPress={right}/>
             </View>
             <View style={AbfrageStyles.button}>
-              <Button title='falsch' style={AbfrageStyles.falseButton} onPress={wrong}/>
+              <Button title='falsch' style={AbfrageStyles.nextButton} onPress={wrong}/>
             </View>
             
           </View>
           <View style={AbfrageStyles.topButtonConatiner}>
-            <Button title='Show' style={AbfrageStyles.nextButton} onPress={next}/>
+            <View style={AbfrageStyles.button}>
+              <Button title='Show' style={AbfrageStyles.nextButton} onPress={next}/>
+            </View>
           </View>
           
           
@@ -135,17 +137,15 @@ export default AbfrageView
 
 const AbfrageStyles = StyleSheet.create({
 view: {
-    backgroundColor: 'yellow',
     flex:1
 },
 subContainer: {
-    backgroundColor: 'blue',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
 },
 topContainer: {
-    backgroundColor: 'black',
+    borderWidth: 1,
     height: 120,
     width: screenWidth - 20,
     position: 'absolute',
@@ -155,7 +155,6 @@ topContainer: {
 
 QuestionContainer: {
     flex: 1,
-    backgroundColor: 'yellow',
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: 20
@@ -166,20 +165,19 @@ question: {
 },
 resultContainer: {
     flex: 1,
-    backgroundColor: 'pink',
+    borderTopWidth: 1.2,
     flexDirection: 'row',   
     justifyContent: 'center',
     alignItems: 'center',
 },
 resultText: {
     textAlign: 'center',
-    backgroundColor: 'green',
     flex: 1,
     fontSize: 20
 },
 
 ButtonContainer: {
-    backgroundColor: 'pink',
+    borderWidth: 1,
     height: 120,
     width: screenWidth - 20,
     position: 'absolute',
@@ -193,15 +191,13 @@ topButtonConatiner: {
     alignItems: 'center',
 },
 button: {
-    backgroundColor: 'green',
     borderColor: 'black',
-    borderWidth: 2,
-    borderRadius: 2,
+    borderWidth: 0.5,
+    borderRadius: 3.5,
 },
-rightButton: {
-    backgroundColor: 'white',},
-falseButton: {
-    backgroundColor: 'white',
+RightFalseButton: {
+  flex: 1,
+  backgroundColor: 'black',
 },
 nextButton: {
     flex: 1,

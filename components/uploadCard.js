@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     container: {
         height: 200,
         width: 150,
-        backgroundColor: 'green',
+        backgroundColor: '#dfdfdf',
         margin: 10,
         borderRadius: 15,
         borderBottomLeftRadius: 10,
@@ -40,10 +40,5 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         marginBottom: 10
-    },
-    subContainer: {
-        backgroundColor: 'yellow',
-        flex: 1,
-        marginBottom: 12,
     },
 })
