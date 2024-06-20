@@ -167,7 +167,6 @@ export default MainView
 const styles = StyleSheet.create({
 statusbar: {
     height: screenHeight,
-    backgroundColor: 'green'
 },
 title: {
     paddingTop: 15,

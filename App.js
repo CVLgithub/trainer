@@ -56,7 +56,6 @@ export default function App() {
 const styles = StyleSheet.create({
   safearea: {
     height: screenHeight,
-    backgroundColor: 'pink'
   },
   status: {
     backgroundColor: "red"
