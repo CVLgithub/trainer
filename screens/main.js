@@ -69,7 +69,7 @@ async function setup(createComponents, goToLogin, setPopUp, navigation){
     console.log('setpopUp')
     setPopUp(<PopUp title = 'Login' button1={{text: 'Login', func: goToLogin}} button2={{text: 'cancel', func: () =>{console.log("cancel PopUp")}}} deleteSelf={setPopUp}></PopUp>)
     console.log('after pop up ------')
-    createComponents([])
+    createComponents([], false)
     console.log('after create Comps')
     navigation.setOptions({
       headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={false}/>,
@@ -116,14 +116,14 @@ const MainView = ({ navigation, route}) => {
     navigation.navigate("abfrage", {name: name})
   }
 
-  const createComponents = (ListOfVocabNames) => {
+  const createComponents = (ListOfVocabNames, loggedIn = true) => {
     console.log("called create")
     console.log('List of Vocab:', ListOfVocabNames)
     const newComponents = () =>{
       let comps = ListOfVocabNames.map((item, index) => (
         <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchV}/>
       ))
-      if (comps.length >= 1){
+      if (loggedIn){
         comps.push(<UploadCard key = {ListOfVocabNames.lenght + 1} switchView = {() => {navigation.navigate('upload')}}></UploadCard>)
       }
       return comps
