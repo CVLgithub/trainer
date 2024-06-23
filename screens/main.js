@@ -59,6 +59,10 @@ async function LogginDataStored(){
   return true
 }
 
+function resolveOptions(options){
+  func.store(options)
+}
+
 async function setup(createComponents, goToLogin, setPopUp, navigation){
   console.log('setup called ----------')
 
@@ -82,16 +86,17 @@ async function setup(createComponents, goToLogin, setPopUp, navigation){
   }
 
   console.log("Setup")
-  const ListOfVocabNames = await func.resolveLogin(LoginData)
+  const apiResult = await func.resolveLogin(LoginData)
+  const ListOfVocabNames = apiResult[0]
+  const options = apiResult[1]
   console.log('returned value :')
   console.log(ListOfVocabNames)
-
+  console.log('returned options:', options)
+  resolveOptions(options)
   //List empty or not logged in successfully
   if(!ListOfVocabNames) {
-    console.log('?')
     ListOfVocabNames = {'"index"': '"item"'}
   }
-  console.log('??')
   console.log("CREATE COMPS")
   createComponents(ListOfVocabNames)
   

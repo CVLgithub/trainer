@@ -65,7 +65,25 @@ export async function handleSave(tablename, table) {
   apirequestPOST(url, table)
 }
 
-async function getData(keyArr) {
+
+async function storeData(key, data) {
+  try {
+    await AsyncStorage.setItem(String(key), String(data));
+    console.log('Data stored successfully', key, data);
+  } catch (error) {
+    console.log('Error storing data: ', error);
+  }
+};
+
+export function store(input, callback = ()=> {console.log('stored')}){
+  for (i in input){
+    storeData(i, input[i])
+  }
+  callback()
+}
+
+
+export async function getData(keyArr) {
   try {
     let res = {}
     for (key in keyArr){
@@ -223,10 +241,11 @@ async function processlogin(response, content){
   return new Promise(async (resolve, reject) => {
     console.log("try loggin (ProcessLogin)")
     response.then(async data => {
-      const loginSuccess = data[0]
+      const loginSuccess = data[0][0]
       const responseStr = data[1]
       const responseHash = data[2]
-      console.log(data + 'Data ----------------------')
+      const options = data[0][1]
+
 
       if (!loginSuccess){
         console.log("couldn't login")
@@ -247,8 +266,9 @@ async function processlogin(response, content){
 
       //console.log("currentuser is set to: " + currentUser)
 
-      console.log('content for getTables ----------------: ', content)
-      resolve(await getTables(content))
+      console.log('content. for getTables ----------------: ', content)
+      const res = await getTables(content)
+      resolve([res,options])
     })
   })
 }
@@ -261,6 +281,13 @@ async function getTables(content){
   })
 }
 
+
+export async function setOptions(dir){
+  const storage = await getData(['username', 'hash'])
+  console.log(dir)
+  url = `vocab/saveOptions?user=${storage.username}&hash=${storage.hash}&options=${JSON.stringify(dir)}`
+  apirequestPOST(url)
+}
 
 
 

@@ -85,6 +85,7 @@ const LoginWindow = ({ navigation, route }) => {
 
   useEffect(() => {
     getData('username', setUser);
+    getData('learnedAb', setLearnedAt)
   }, []);
 
 
@@ -131,15 +132,21 @@ const LoginWindow = ({ navigation, route }) => {
 
         <View style = {styles.coloumn}>
           <Row>
-            {/* <Slider
+            <Text>{learnedAt}</Text>
+            <Slider
               animationType="timing"
               maximumTrackTintColor="#ccc"
               maximumValue={10}
               minimumTrackTintColor="#222"
               minimumValue={2}
               allowTouchTrack
-              onSlidingComplete={(value) =>
+              onSlidingComplete={(value) => {
+                //setLearnedAt(value)
+                storeData('learnedAb', value)
                 setLearnedAt(value)
+                console.log('new value:', value)
+                func.setOptions({'learnedAb': value})
+                }
               }
               orientation="horizontal"
               step={1}
@@ -148,8 +155,8 @@ const LoginWindow = ({ navigation, route }) => {
               thumbTintColor="#0c0"
               thumbTouchSize={{ width: 8, height: 8 }}
               trackStyle={{ height: 8, borderRadius: 1 }}
-              value={50}
-            /> */}
+              value={learnedAt}
+            />
           </Row>
         </View>
         
