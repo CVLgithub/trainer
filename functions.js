@@ -51,7 +51,7 @@ export const pickSomething = async () => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(data);
+    console.log('file send');
   } catch (error) {
     console.log("Error while selecting file: ", error);
   }

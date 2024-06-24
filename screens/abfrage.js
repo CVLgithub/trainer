@@ -91,8 +91,10 @@ const AbfrageView = ({ navigation, route }) => {
     }    
   }
 
-  return(
+  try{
+    return(
     <View style={AbfrageStyles.view}>
+      <Button title='tabelle' style={AbfrageStyles.nextButton} onPress={func => {navigation.navigate('table', {name: name})}}/>
       <View style={AbfrageStyles.subContainer}>
 
         <View style={AbfrageStyles.topContainer}>
@@ -131,6 +133,14 @@ const AbfrageView = ({ navigation, route }) => {
     </View>
     
   )
+  }
+  catch {
+    return (
+    <View>
+        <Text>error</Text>
+        <Button title='tabelle' style={AbfrageStyles.nextButton} onPress={func => {navigation.navigate('table', {name: name})}}/>
+    </View>)
+  }
 }
   
 export default AbfrageView
