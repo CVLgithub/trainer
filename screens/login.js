@@ -15,60 +15,26 @@ const Row = ({ children }) => (
 )
 
 
-async function storeData(key, data) {
-  try {
-    await AsyncStorage.setItem(String(key), String(data));
-    console.log('Data stored successfully', key, data);
-  } catch (error) {
-    console.log('Error storing data: ', error);
-  }
-};
-
-async function getData(key, callback) {
-try {
-  const value = await AsyncStorage.getItem(key);
-  if (value !== null) {
-    // Daten gefunden, setzen sie im State
-    console.log(`return ${value}`)
-    callback(value)
-  } else {
-    console.log('No data found');
-    return 'not logged in'
-  }
-} catch (error) {
-  console.log('Error retrieving data: ', error);
-  return 'error'
-}
-};
-
-
-async function createHash(input, callback){
+async function storeHash(input, callback){
   console.log(input, '<------- Input createhash')
   const hash = await func.createHash(input.username, input.password)
   if(hash){
-    store({username: input.username, hash: hash}, callback)
+    func.store({username: input.username, hash: hash}, callback)
   }
   console.log("'createHash in Login': NO VALID HASH - nothing stored")
   
 }
 
 
-
-function store(input, callback){
-  for (i in input){
-    storeData(i, input[i])
-  }
-  callback()
-}
-
 async function register(input, setPopUp, callback){
   console.log('register pressed')
   const answer = await func.resolveRegister([input.username, input.password])
   console.log(answer)
   if(answer){
-    createHash(input,callback)
+    storeHash(input,callback)
     return
   }
+  console.log('popup')
   setPopUp(<PopUp title = 'register Failed' button1={{text: 'cancel', func: () =>{console.log("cancel PopUp")}}} button2={undefined} deleteSelf={setPopUp}></PopUp>)
   /* console.log("'createHash in Login': NO VALID HASH - nothing stored") */
 }
@@ -84,8 +50,12 @@ const LoginWindow = ({ navigation, route }) => {
   const [learnedAt, setLearnedAt] = useState()
 
   useEffect(() => {
-    getData('username', setUser);
-    getData('learnedAb', setLearnedAt)
+    async function effektFunktion() {
+      const storedData = await func.getDataArr(['username', 'learnedAb']);
+      setUser(storedData.username)
+      setLearnedAt(storedData.learnedAb)
+    }
+    effektFunktion();
   }, []);
 
 
@@ -111,8 +81,8 @@ const LoginWindow = ({ navigation, route }) => {
         </View>
 
           <View style  = {styles.buttonContainer}>
-            <Button title='Login' style = {styles.Button} onPress={() => {createHash({username: username, password: password},callback)}}></Button>
-            <Button title='Log out' style = {styles.Button} onPress={() => {store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>
+            <Button title='Login' style = {styles.Button} onPress={() => {storeHash({username: username, password: password},callback)}}></Button>
+            <Button title='Log out' style = {styles.Button} onPress={() => {func.store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>
             <Button title='Register' style = {styles.Button} onPress={() => {register({username: username, password: password},setPopUp,callback)}}></Button>               
           </View>
 
@@ -142,7 +112,7 @@ const LoginWindow = ({ navigation, route }) => {
               allowTouchTrack
               onSlidingComplete={(value) => {
                 //setLearnedAt(value)
-                storeData('learnedAb', value)
+                func.storeData('learnedAb', value)
                 setLearnedAt(value)
                 console.log('new value:', value)
                 func.setOptions({'learnedAb': value})

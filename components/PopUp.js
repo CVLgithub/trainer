@@ -19,7 +19,7 @@ const PopUp = ({title, button1, button2, deleteSelf}) => {
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
           //setModalVisible(!modalVisible);
-          if (deleteSelf){deleteSelf();}
+          del()
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>

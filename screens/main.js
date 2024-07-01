@@ -13,111 +13,26 @@ import PopUp from '../components/PopUp';
 import UserIcon from '../components/usericon.js'
 
 const screenWidth = Dimensions.get('window').width; //full width
-const screenHeight = Dimensions.get('window').height; //full 
+const screenHeight = Dimensions.get('window').height; //full height
 
-let LoginData
 
-async function getData(keyArr) {
-  console.log('get data called')
-  try {
-    let res = {}
-    for (key in keyArr){
-      console.log('trying', keyArr[key])
-      const value = await AsyncStorage.getItem(keyArr[key]);
-      if (value !== null) {
-        // Daten gefunden, setzen sie im State
-        console.log(`return ${value}`)
-        res[String(keyArr[key])] = value
-      } else {
-        console.log('No data found');
-      }
-    }
-    return res
-    
-  } catch (error) {
-    console.log('Error retrieving data: ', error);
-  }
-};
 
-async function LogginDataStored(){
-  const data = await getData(['username', 'hash'])
-  console.log(data)
-  if (!data.username){
-    console.log('no username')
-    return false
-  } else if (!data.hash){
-    console.log('no hash')
-  }
-  if (data.username == "undefined"){
-    console.log('no username')
-    return false
-  } else if (data.hash == "undefined"){
-    console.log('no hash')
-  }
-  console.log('correct')
-  LoginData = data
-  return true
-}
-
-function resolveOptions(options){
-  func.store(options)
-}
-
-async function setup(createComponents, goToLogin, setPopUp, navigation){
-  console.log('setup called ----------')
-
-  if (!await LogginDataStored()){
-    console.log("poPup!!!!!");
-    
-    
-    console.log('setpopUp')
-    setPopUp(<PopUp title = 'Login' button1={{text: 'Login', func: goToLogin}} button2={{text: 'cancel', func: () =>{console.log("cancel PopUp")}}} deleteSelf={setPopUp}></PopUp>)
-    console.log('after pop up ------')
-    createComponents([], false)
-    console.log('after create Comps')
-    navigation.setOptions({
-      headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={false}/>,
-    });
-    return
-  } else {
-    navigation.setOptions({
-      headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={true}/>,
-    });
-  }
-
-  console.log("Setup")
-  const apiResult = await func.resolveLogin(LoginData)
-  const ListOfVocabNames = apiResult[0]
-  const options = apiResult[1]
-  console.log('returned value :')
-  console.log(ListOfVocabNames)
-  console.log('returned options:', options)
-  resolveOptions(options)
-  //List empty or not logged in successfully
-  if(!ListOfVocabNames) {
-    ListOfVocabNames = {'"index"': '"item"'}
-  }
-  console.log("CREATE COMPS")
-  createComponents(ListOfVocabNames)
-  
-}
 
 const MainView = ({ navigation, route}) => { 
   const [popUp, setPopUp] = useState()
-  console.log('main view')
   const [items, setComponents] = useState([]);
-  let value
+  let refresh
+  
   try {
-    console.log('value true')
-    value = route.params
-    console.log('params:',route.params)
+    refresh = route.params
+    console.log('refresh:',route.params)
   } catch {
-    console.log('value undefined')
-    value = false
+    console.log('refresh undefined')
+    refresh = false
   }
 
-  const switchV = (name) => {
-    console.log("------------------------------",name)
+  const switchView = (name) => {
+    console.log("switch to: ",name)
     navigation.navigate("abfrage", {name: name})
   }
 
@@ -126,7 +41,7 @@ const MainView = ({ navigation, route}) => {
     console.log('List of Vocab:', ListOfVocabNames)
     const newComponents = () =>{
       let comps = ListOfVocabNames.map((item, index) => (
-        <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchV}/>
+        <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchView}/>
       ))
       if (loggedIn){
         comps.push(<UploadCard key = {ListOfVocabNames.lenght + 1} switchView = {() => {navigation.navigate('upload')}}></UploadCard>)
@@ -137,15 +52,10 @@ const MainView = ({ navigation, route}) => {
     console.log('set components')
   }
 
-  /* console.log('value: ',value)
-  if (value){
-    //setComponents()
-    setup(createComponents)
-  } */
   useEffect(() => {
-    console.log("---------------------> EFFECT CALLED")
+    console.log("-> REFRESH EFFECT CALLED")
     setup(createComponents, () => navigation.navigate("login"), setPopUp, navigation);
-  }, [value]);
+  }, [refresh]);
   
   return (
     <View style={styles.view}>
@@ -160,10 +70,51 @@ const MainView = ({ navigation, route}) => {
     </View>
   );
 };
-  
-  
 export default MainView
   
+
+function resolveOptions(options){
+  func.store(options)
+}
+
+
+async function setup(createComponents, goToLogin, setPopUp, navigation){
+  console.log('setup called')
+
+  const [LoginDataIsStored, LoginData] = await func.LogginDataStored()
+  console.log(LoginDataIsStored, LoginData)
+
+  if (!LoginDataIsStored){ 
+    console.log('setpopUp')
+    const PopUpTitle = 'login'
+    const PopUpButton1 = {text: 'Login', func: goToLogin}
+    const PopUpButton2 = {text: 'cancel', func: () =>{console.log("cancel PopUp")}}
+    setPopUp(func.CreatePopUp(PopUpTitle, PopUpButton1, PopUpButton2, setPopUp))
+
+    //clear componets
+    createComponents([], false)
+
+    //set Usericon to not logged In
+    navigation.setOptions({
+      headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={false}/>,
+    });
+    return
+    
+  } else {
+    //set Usericon to logged In
+    navigation.setOptions({
+      headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={true}/>,
+    });
+  }
+
+  console.log("Setup")
+  const apiResult = (await func.resolveLogin(LoginData))
+  console.log('result',apiResult)
+  const [ListOfVocabNames, options] = apiResult
+
+  resolveOptions(options)
+  createComponents(ListOfVocabNames)
+}
   
   
 const styles = StyleSheet.create({

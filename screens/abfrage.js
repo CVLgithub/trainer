@@ -58,7 +58,11 @@ const AbfrageView = ({ navigation, route }) => {
       setQuestion(nextQuestion);
     } else {
       save(list)
-      setPopUp(<PopUp title = 'Finished learning' button1={{text: 'Restart', func:  () =>{setQuestion({ id: -1, latein: 'start' }); setShowResult(false)}}} button2={{text: 'Go Back', func: () =>{navigation.navigate("main")}}} deleteSelf={setPopUp}></PopUp>)
+
+      const PopUpTitle = 'Finished learning'
+      const PopUpButton1 = {text: 'Restart', func:  () =>{setQuestion({ id: -1, latein: 'start' }); setShowResult(false)}}
+      const PopUpButton2 = {text: 'Go Back', func: () =>{navigation.navigate("main")}}
+      setPopUp(func.CreatePopUp(PopUpTitle, PopUpButton1, PopUpButton2, setPopUp))
       console.log('No next question available');
     }
   };

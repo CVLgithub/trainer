@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import { FlatListComponent } from 'react-native';
 
+import PopUp from './components/PopUp';
+
 import axios from 'axios'
 
 export function test(){
@@ -19,8 +21,14 @@ let changeInVocab
 let active
 let currentUser 
 
+
+export function CreatePopUp(title, button1, button2, deleteSelf){
+  //button example: {text: 'cancel', func: () =>{console.log("cancel PopUp")}}
+  return <PopUp title = {title} button1={{text: button1.text, func: button1.func}} button2={{text: button2.text, func: button2.func}} deleteSelf={deleteSelf}></PopUp>
+}
+
 export const pickSomething = async () => {
-  const storage = await getData(['username', 'hash'])
+  const storage = await getDataArr(['username', 'hash'])
   try {
     const docRes = await DocumentPicker.getDocumentAsync();
 
@@ -60,7 +68,7 @@ export const pickSomething = async () => {
 
 
 export async function handleSave(tablename, table) {
-  const storage = await getData(['username', 'hash'])
+  const storage = await getDataArr(['username', 'hash'])
   url = `vocab/table/save?user=${storage.username}&hash=${storage.hash}&table=${tablename}`
   apirequestPOST(url, table)
 }
@@ -83,7 +91,7 @@ export function store(input, callback = ()=> {console.log('stored')}){
 }
 
 
-export async function getData(keyArr) {
+export async function getDataArr(keyArr) {
   try {
     let res = {}
     for (key in keyArr){
@@ -94,6 +102,7 @@ export async function getData(keyArr) {
         console.log(`return ${value}`)
         res[String(keyArr[key])] = value
       } else {
+        res[String(keyArr[key])] = undefined
         console.log('No data found');
       }
     }
@@ -103,6 +112,41 @@ export async function getData(keyArr) {
     console.log('Error retrieving data: ', error);
   }
 };
+
+export async function getData(key, callback) {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    if (value !== null) {
+      // Daten gefunden, setzen sie im State
+      console.log(`return ${value}`)
+      callback(value)
+    } else {
+      console.log('No data found');
+      return 'error'
+    }
+  } catch (error) {
+    console.log('Error retrieving data: ', error);
+    return 'error'
+  }
+  };
+
+export async function LogginDataStored(){
+  return new Promise(async (resolve, reject) => {
+    const data = await getDataArr(['username', 'hash'])
+    console.log('getDataArr result:', data)
+    const username = data.username
+    const hash = data.hash
+    if (!username || !hash || username == "undefined" || hash == "undefined"){
+      console.log('no username or hash')
+      resolve([false, undefined])
+    }
+    console.log('correct')
+    
+   resolve([true,data])
+  })
+}
+
+
 
 
 
@@ -124,11 +168,13 @@ export async function createHash(username, password){
 
 export async function resolveLogin(custom){
   return new Promise(async (resolve, reject) => {
+    console.log('req')
     const user = custom.username
     const password = false
     const hash = custom.hash
     console.log(user, password, hash) 
     const apiResult = await apirequestPOST("login",[user,password,hash])
+    console.log('res')
     resolve(apiResult)
   })
 }
@@ -155,7 +201,7 @@ export async function apirequestGET(url, process = true, callback, req = false) 
     
     if (req){
       if (url == "vocab/table"){
-        const storage = await getData(['username', 'hash'])
+        const storage = await getDataArr(['username', 'hash'])
       reqUrl = reqUrl + "?" + String(req) + `&hash=${storage.hash}&user=${storage.username}`
       } else {
         reqUrl = reqUrl + "?" + String(req)
@@ -283,7 +329,7 @@ async function getTables(content){
 
 
 export async function setOptions(dir){
-  const storage = await getData(['username', 'hash'])
+  const storage = await getDataArr(['username', 'hash'])
   console.log(dir)
   url = `vocab/saveOptions?user=${storage.username}&hash=${storage.hash}&options=${JSON.stringify(dir)}`
   apirequestPOST(url)
