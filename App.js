@@ -35,6 +35,8 @@ let count = 0
 export default function App() {
   const Stack = createNativeStackNavigator();
 
+  const ToLogin = () => {navigation.navigate("login")}
+
   return (
     <>
       <SafeAreaView
@@ -52,11 +54,11 @@ export default function App() {
         <StatusBar style={styles.status}/> 
         <NavigationContainer>
           <Stack.Navigator initialRouteName='main'>
-            <Stack.Screen name = "main" component = {MainView} options={({ navigation, route}) => ({title: 'Home', headerTitle: () => <Header title={"Vokabeltrainer"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={true}/> })}/> 
+            <Stack.Screen name = "main" component = {MainView} options={({ navigation, route}) => ({title: 'Home', headerTitle: () => <Header title={"Vokabeltrainer"}/>, headerRight: () => <UserIcon func = {ToLogin} loginState={true}/> })}/> 
             <Stack.Screen name = "abfrage" component = {AbfrageView} options={{title: 'Abfrage', headerTitle: (props) => <Header title={props.children}/>, headerRight: () => <Text>save</Text>}}/>
             <Stack.Screen name = "login" component = {LoginView} options={{title: 'Login', headerTitle: (props) => <Header title={props.children}/>}}/>
-            <Stack.Screen name = "upload" component = {UploadView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Upload"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={true}/> })}/>
-            <Stack.Screen name = "table" component = {TableView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Tabelle"}/>, headerRight: () => <UserIcon func = {() => navigation.navigate('login')} loginState={true}/> })}/>
+            <Stack.Screen name = "upload" component = {UploadView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Upload"}/>, headerRight: () => <UserIcon func = {ToLogin} loginState={true}/> })}/>
+            <Stack.Screen name = "table" component = {TableView} options={({ navigation, route}) => ({title: 'Zurück', headerTitle: () => <Header title={"Tabelle"}/>, headerRight: () => <UserIcon func = {ToLogin} loginState={true}/> })}/>
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>
