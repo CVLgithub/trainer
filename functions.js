@@ -51,7 +51,7 @@ export const pickSomething = async () => {
     formData.append('username', storage.username);
     formData.append('hash', storage.hash);
 
-    apiUrl = 'http://api.inka.mywire.org/api/upload'
+    apiUrl = 'https://api.inka.mywire.org/api/upload'
 
     const { data } = await axios.post(apiUrl, formData, {
       headers: {
@@ -197,7 +197,7 @@ export async function resolveRegister(input) {
 export async function apirequestGET(url, process = true, callback, req = false) {
   return new Promise(async (resolve, reject) => {
     //resolve('test')
-    let reqUrl = `http://api.api.inka.mywire.org/api/${url}` 
+    let reqUrl = `https://api.api.inka.mywire.org/api/${url}` 
     
     if (req){
       if (url == "vocab/table"){
@@ -244,7 +244,7 @@ export async function apirequestGET(url, process = true, callback, req = false) 
 async function apirequestPOST(url, content, autoGetReq = true) {
   return new Promise(async (resolve, reject) => {
     console.log(`Post request to url: ${url}, with content: ${content}`)
-    fetch(`http://api.inka.mywire.org/api/${url}`, {
+    fetch(`https://api.inka.mywire.org/api/${url}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
