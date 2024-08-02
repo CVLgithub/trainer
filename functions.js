@@ -197,7 +197,7 @@ export async function resolveRegister(input) {
 export async function apirequestGET(url, process = true, callback, req = false) {
   return new Promise(async (resolve, reject) => {
     //resolve('test')
-    let reqUrl = `https://api.api.inka.mywire.org/api/${url}` 
+    let reqUrl = `https://api.inka.mywire.org/api/${url}` 
     
     if (req){
       if (url == "vocab/table"){
