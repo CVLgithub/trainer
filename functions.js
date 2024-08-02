@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import { FlatListComponent } from 'react-native';
 
+import PopUp from './components/PopUp';
+
 import axios from 'axios'
 
 export function test(){
@@ -19,8 +21,14 @@ let changeInVocab
 let active
 let currentUser 
 
+
+export function CreatePopUp(title, button1, button2, deleteSelf){
+  //button example: {text: 'cancel', func: () =>{console.log("cancel PopUp")}}
+  return <PopUp title = {title} button1={{text: button1.text, func: button1.func}} button2={{text: button2.text, func: button2.func}} deleteSelf={deleteSelf}></PopUp>
+}
+
 export const pickSomething = async () => {
-  const storage = await getData(['username', 'hash'])
+  const storage = await getDataArr(['username', 'hash'])
   try {
     const docRes = await DocumentPicker.getDocumentAsync();
 
@@ -51,7 +59,7 @@ export const pickSomething = async () => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(data);
+    console.log('file send');
   } catch (error) {
     console.log("Error while selecting file: ", error);
   }
@@ -60,12 +68,30 @@ export const pickSomething = async () => {
 
 
 export async function handleSave(tablename, table) {
-  const storage = await getData(['username', 'hash'])
+  const storage = await getDataArr(['username', 'hash'])
   url = `vocab/table/save?user=${storage.username}&hash=${storage.hash}&table=${tablename}`
   apirequestPOST(url, table)
 }
 
-async function getData(keyArr) {
+
+async function storeData(key, data) {
+  try {
+    await AsyncStorage.setItem(String(key), String(data));
+    console.log('Data stored successfully', key, data);
+  } catch (error) {
+    console.log('Error storing data: ', error);
+  }
+};
+
+export function store(input, callback = ()=> {console.log('stored')}){
+  for (i in input){
+    storeData(i, input[i])
+  }
+  callback()
+}
+
+
+export async function getDataArr(keyArr) {
   try {
     let res = {}
     for (key in keyArr){
@@ -76,6 +102,7 @@ async function getData(keyArr) {
         console.log(`return ${value}`)
         res[String(keyArr[key])] = value
       } else {
+        res[String(keyArr[key])] = undefined
         console.log('No data found');
       }
     }
@@ -85,6 +112,41 @@ async function getData(keyArr) {
     console.log('Error retrieving data: ', error);
   }
 };
+
+export async function getData(key, callback) {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    if (value !== null) {
+      // Daten gefunden, setzen sie im State
+      console.log(`return ${value}`)
+      callback(value)
+    } else {
+      console.log('No data found');
+      return 'error'
+    }
+  } catch (error) {
+    console.log('Error retrieving data: ', error);
+    return 'error'
+  }
+  };
+
+export async function LogginDataStored(){
+  return new Promise(async (resolve, reject) => {
+    const data = await getDataArr(['username', 'hash'])
+    console.log('getDataArr result:', data)
+    const username = data.username
+    const hash = data.hash
+    if (!username || !hash || username == "undefined" || hash == "undefined"){
+      console.log('no username or hash')
+      resolve([false, undefined])
+    }
+    console.log('correct')
+    
+   resolve([true,data])
+  })
+}
+
+
 
 
 
@@ -106,11 +168,13 @@ export async function createHash(username, password){
 
 export async function resolveLogin(custom){
   return new Promise(async (resolve, reject) => {
+    console.log('req')
     const user = custom.username
     const password = false
     const hash = custom.hash
     console.log(user, password, hash) 
     const apiResult = await apirequestPOST("login",[user,password,hash])
+    console.log('res')
     resolve(apiResult)
   })
 }
@@ -137,7 +201,7 @@ export async function apirequestGET(url, process = true, callback, req = false) 
     
     if (req){
       if (url == "vocab/table"){
-        const storage = await getData(['username', 'hash'])
+        const storage = await getDataArr(['username', 'hash'])
       reqUrl = reqUrl + "?" + String(req) + `&hash=${storage.hash}&user=${storage.username}`
       } else {
         reqUrl = reqUrl + "?" + String(req)
@@ -223,10 +287,11 @@ async function processlogin(response, content){
   return new Promise(async (resolve, reject) => {
     console.log("try loggin (ProcessLogin)")
     response.then(async data => {
-      const loginSuccess = data[0]
+      const loginSuccess = data[0][0]
       const responseStr = data[1]
       const responseHash = data[2]
-      console.log(data + 'Data ----------------------')
+      const options = data[0][1]
+
 
       if (!loginSuccess){
         console.log("couldn't login")
@@ -247,8 +312,9 @@ async function processlogin(response, content){
 
       //console.log("currentuser is set to: " + currentUser)
 
-      console.log('content for getTables ----------------: ', content)
-      resolve(await getTables(content))
+      console.log('content. for getTables ----------------: ', content)
+      const res = await getTables(content)
+      resolve([res,options])
     })
   })
 }
@@ -261,6 +327,13 @@ async function getTables(content){
   })
 }
 
+
+export async function setOptions(dir){
+  const storage = await getDataArr(['username', 'hash'])
+  console.log(dir)
+  url = `vocab/saveOptions?user=${storage.username}&hash=${storage.hash}&options=${JSON.stringify(dir)}`
+  apirequestPOST(url)
+}
 
 
 

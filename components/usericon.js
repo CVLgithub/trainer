@@ -14,10 +14,6 @@ const user = {
 
 
 const UserIcon = ( {func, loginState}) => {
-    console.log('try icon')
-    console.log('usericon:', loginState)
-    
-    
     
     const iconSize = 35; // Größe des Icons
 

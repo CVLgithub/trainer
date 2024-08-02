@@ -31,7 +31,7 @@ const AbfrageView = ({ navigation, route }) => {
   const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
   const [list, setList] = useState(null);
   const [showResult, setShowResult] = useState(true)
-  const [result, setResult] = useState({grammatik: "click ", deutsch: "Show"})
+  const [result, setResult] = useState({grammatik: "CLICK ", deutsch: "SHOW"})
 
   useEffect(() => {
     console.log('---------------------effect run---')
@@ -58,7 +58,11 @@ const AbfrageView = ({ navigation, route }) => {
       setQuestion(nextQuestion);
     } else {
       save(list)
-      setPopUp(<PopUp title = 'Finished learning' button1={{text: 'Restart', func:  () =>{setQuestion({ id: -1, latein: 'start' }); setShowResult(false)}}} button2={{text: 'Go Back', func: () =>{navigation.navigate("main")}}} deleteSelf={setPopUp}></PopUp>)
+
+      const PopUpTitle = 'Finished learning'
+      const PopUpButton1 = {text: 'Restart', func:  () =>{setQuestion({ id: -1, latein: 'start' }); setShowResult(false)}}
+      const PopUpButton2 = {text: 'Go Back', func: () =>{navigation.navigate("main")}}
+      setPopUp(func.CreatePopUp(PopUpTitle, PopUpButton1, PopUpButton2, setPopUp))
       console.log('No next question available');
     }
   };
@@ -91,8 +95,10 @@ const AbfrageView = ({ navigation, route }) => {
     }    
   }
 
-  return(
+  try{
+    return(
     <View style={AbfrageStyles.view}>
+      <Button title='tabelle' style={AbfrageStyles.nextButton} onPress={func => {navigation.navigate('table', {name: name})}}/>
       <View style={AbfrageStyles.subContainer}>
 
         <View style={AbfrageStyles.topContainer}>
@@ -113,12 +119,14 @@ const AbfrageView = ({ navigation, route }) => {
               <Button title='richtig' style={AbfrageStyles.rightButton} onPress={right}/>
             </View>
             <View style={AbfrageStyles.button}>
-              <Button title='falsch' style={AbfrageStyles.falseButton} onPress={wrong}/>
+              <Button title='falsch' style={AbfrageStyles.nextButton} onPress={wrong}/>
             </View>
             
           </View>
           <View style={AbfrageStyles.topButtonConatiner}>
-            <Button title='Show' style={AbfrageStyles.nextButton} onPress={next}/>
+            <View style={AbfrageStyles.button}>
+              <Button title='Show' style={AbfrageStyles.nextButton} onPress={next}/>
+            </View>
           </View>
           
           
@@ -129,23 +137,29 @@ const AbfrageView = ({ navigation, route }) => {
     </View>
     
   )
+  }
+  catch {
+    return (
+    <View>
+        <Text>error</Text>
+        <Button title='tabelle' style={AbfrageStyles.nextButton} onPress={func => {navigation.navigate('table', {name: name})}}/>
+    </View>)
+  }
 }
   
 export default AbfrageView
 
 const AbfrageStyles = StyleSheet.create({
 view: {
-    backgroundColor: 'yellow',
     flex:1
 },
 subContainer: {
-    backgroundColor: 'blue',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
 },
 topContainer: {
-    backgroundColor: 'black',
+    borderWidth: 1,
     height: 120,
     width: screenWidth - 20,
     position: 'absolute',
@@ -155,7 +169,6 @@ topContainer: {
 
 QuestionContainer: {
     flex: 1,
-    backgroundColor: 'yellow',
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: 20
@@ -166,20 +179,19 @@ question: {
 },
 resultContainer: {
     flex: 1,
-    backgroundColor: 'pink',
+    borderTopWidth: 1.2,
     flexDirection: 'row',   
     justifyContent: 'center',
     alignItems: 'center',
 },
 resultText: {
     textAlign: 'center',
-    backgroundColor: 'green',
     flex: 1,
     fontSize: 20
 },
 
 ButtonContainer: {
-    backgroundColor: 'pink',
+    borderWidth: 1,
     height: 120,
     width: screenWidth - 20,
     position: 'absolute',
@@ -193,15 +205,13 @@ topButtonConatiner: {
     alignItems: 'center',
 },
 button: {
-    backgroundColor: 'green',
     borderColor: 'black',
-    borderWidth: 2,
-    borderRadius: 2,
+    borderWidth: 0.5,
+    borderRadius: 3.5,
 },
-rightButton: {
-    backgroundColor: 'white',},
-falseButton: {
-    backgroundColor: 'white',
+RightFalseButton: {
+  flex: 1,
+  backgroundColor: 'black',
 },
 nextButton: {
     flex: 1,

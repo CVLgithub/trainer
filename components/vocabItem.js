@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     container: {
         height: 200,
         width: 150,
-        backgroundColor: 'green',
+        backgroundColor: '#dfdfdf',
         margin: 10,
         borderRadius: 15,
         borderBottomLeftRadius: 10,
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     subContainer: {
-        backgroundColor: 'yellow',
+        backgroundColor: '#f9f9f9',
         flex: 1,
         marginBottom: 12,
     },
