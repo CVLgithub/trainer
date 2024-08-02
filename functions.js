@@ -256,7 +256,7 @@ async function apirequestPOST(url, content, autoGetReq = true) {
         if (response.ok) {
           console.log('Post-Abonnement erfolgreich erstellt');
           const responseValue = response.json()
-
+          console.log('ANTWORT__________', responseValue)
 
           //Antwort verarbeiten
           if (!autoGetReq) {
@@ -323,7 +323,9 @@ async function processlogin(response, content){
 async function getTables(content){
   return new Promise(async (resolve, reject) => {
     console.log("get tables called")
-    resolve(await apirequestGET("vocab/tables", false, undefined, `userName=${content[0]}&password=${content[1]}&hash=${content[2]}`)) 
+    const apires = await apirequestGET("vocab/tables", false, undefined, `userName=${content[0]}&password=${content[1]}&hash=${content[2]}`)
+    console.log('GETTABLES " ANTWORT___________________', apires[1])
+    resolve(apires[0]) 
   })
 }
 
