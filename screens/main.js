@@ -36,12 +36,16 @@ const MainView = ({ navigation, route}) => {
     navigation.navigate("abfrage", {name: name})
   }
 
-  const createComponents = (ListOfVocabNames, loggedIn = true) => {
+  const createComponents = (VocabDic, loggedIn = true) => {
+const ListofVocabNames = []
+for (i of VocabDic){
+    ListOfVocabNames.push(i)
+}
     console.log("called create")
     console.log('List of Vocab:', ListOfVocabNames)
     const newComponents = () =>{
       let comps = ListOfVocabNames.map((item, index) => (
-        <VocabItem key={index} name={item} Values={['0','1', '2']} switchView = {switchView}/>
+        <VocabItem key={index} name={item} Values= {lastlearned: VocabDic[item]['lastLearned'], pctLearned: VocabDic[item]['pctLearned']} switchView = {switchView}/>
       ))
       if (loggedIn){
         comps.push(<UploadCard key = {ListOfVocabNames.lenght + 1} switchView = {() => {navigation.navigate('upload')}}></UploadCard>)
