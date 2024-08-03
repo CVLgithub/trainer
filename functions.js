@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import { FlatListComponent } from 'react-native';
-//WHAT
+
 import PopUp from './components/PopUp';
 
 import axios from 'axios'
