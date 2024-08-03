@@ -112,7 +112,7 @@ async function setup(createComponents, goToLogin, setPopUp, navigation){
   console.log("Setup")
   const apiResult = (await func.resolveLogin(LoginData))
   console.log('result',apiResult)
-  const [ListOfVocabNames, options] = apiResult
+  const [ListOfVocabNames,VocabDic, options] = apiResult
 
   resolveOptions(options)
   createComponents(ListOfVocabNames)
