@@ -314,7 +314,8 @@ async function processlogin(response, content){
 
       console.log('content. for getTables ----------------: ', content)
       const res = await getTables(content)
-      resolve([res,options])
+      res.push(options)
+      resolve(res)
     })
   })
 }
@@ -325,7 +326,7 @@ async function getTables(content){
     console.log("get tables called")
     const apires = await apirequestGET("vocab/tables", false, undefined, `userName=${content[0]}&password=${content[1]}&hash=${content[2]}`)
     console.log('GETTABLES " ANTWORT___________________', apires[1])
-    resolve(apires[0]) 
+    resolve(apires) 
   })
 }
 
