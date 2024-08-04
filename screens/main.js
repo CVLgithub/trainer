@@ -45,7 +45,7 @@ for (i of VocabDic){
     console.log('List of Vocab:', ListOfVocabNames)
     const newComponents = () =>{
       let comps = ListOfVocabNames.map((item, index) => (
-        <VocabItem key={index} name={item} Values= {lastlearned: VocabDic[item]['lastLearned'], pctLearned: VocabDic[item]['pctLearned']} switchView = {switchView}/>
+        <VocabItem key={index} name={item} Values= {{lastlearned: VocabDic[item]['lastLearned'], pctLearned: VocabDic[item]['pctLearned']}} switchView = {switchView}/>
       ))
       if (loggedIn){
         comps.push(<UploadCard key = {ListOfVocabNames.lenght + 1} switchView = {() => {navigation.navigate('upload')}}></UploadCard>)
