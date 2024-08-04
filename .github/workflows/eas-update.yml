@@ -3,7 +3,7 @@ name: EAS Update
 on:
   push:
     branches:
-      - main  # Passe dies an deinen Standard-Branch an
+      - '**'  # Passe dies an deinen Standard-Branch an
 
 jobs:
   eas-update:
