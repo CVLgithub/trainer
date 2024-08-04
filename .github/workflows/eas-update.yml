@@ -1,0 +1,28 @@
+name: EAS Update
+
+on:
+  push:
+    branches:
+      - main  # Passe dies an deinen Standard-Branch an
+
+jobs:
+  eas-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Verwende die Node-Version deiner Wahl
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Authenticate with Expo
+        run: echo "${{ secrets.EXPO_TOKEN }}" | eas login --token
+
+      - name: Run EAS update
+        run: eas update --branch main  # Passe dies an deinen Branch an
