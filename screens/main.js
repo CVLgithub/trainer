@@ -37,11 +37,12 @@ const MainView = ({ navigation, route}) => {
   }
 
   const createComponents = (VocabDic, loggedIn = true) => {
-const ListofVocabNames = []
-for (i of VocabDic){
-    ListOfVocabNames.push(i)
-}
-    console.log("called create")
+    console.log('create comps start')
+    const ListOfVocabNames = []
+    for (i in VocabDic){
+      ListOfVocabNames.push(i)
+    }
+    
     console.log('List of Vocab:', ListOfVocabNames)
     const newComponents = () =>{
       let comps = ListOfVocabNames.map((item, index) => (
@@ -119,7 +120,7 @@ async function setup(createComponents, goToLogin, setPopUp, navigation){
   const [ListOfVocabNames,VocabDic, options] = apiResult
 
   resolveOptions(options)
-  createComponents(ListOfVocabNames)
+  createComponents(VocabDic)
 }
   
   
