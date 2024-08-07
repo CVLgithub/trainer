@@ -37,10 +37,10 @@ const MainView = ({ navigation, route}) => {
   }
 
   const createComponents = (VocabDic, loggedIn = true) => {
-const ListofVocabNames = []
-for (i of VocabDic){
-    ListOfVocabNames.push(i)
-}
+  const ListOfVocabNames = []
+  for (i of VocabDic){
+      ListOfVocabNames.push(i)
+  }
     console.log("called create")
     console.log('List of Vocab:', ListOfVocabNames)
     const newComponents = () =>{
