@@ -15,17 +15,21 @@ const screenHeight = Dimensions.get('window').height; //full height
 
 const AbfrageView = ({ navigation, route }) => {
   const [popUp, setPopUp] = useState()
+  const { name } = route.params;
+
+  const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
+  const [list, setList] = useState(null);
+  const [showResult, setShowResult] = useState(true)
+  const [result, setResult] = useState({grammatik: "CLICK ", deutsch: "SHOW"})
+
 
   useFocusEffect(
     useCallback(() => {
       // Code to run when the screen gains focus
       return () => {
         // Code to run when the screen loses focus
-        console.log('left ----------------------------------------------------')
-        const PopUpTitle = 'Unsaved Data'
-        const PopUpButton1 = {text: 'Save Now', func: () =>{console.log("Speichern ------------------")}}
-        const PopUpButton2 = {text: 'Leave anyways', func: () =>{console.log("cancel PopUp --------------------")}}
-        setPopUp(func.CreatePopUp(PopUpTitle, PopUpButton1, PopUpButton2, setPopUp))
+        console.log('left screen')
+        save()
       };
     }, [])
   )
@@ -37,12 +41,7 @@ const AbfrageView = ({ navigation, route }) => {
     func.handleSave(name, list)
   }
 
-  const { name } = route.params;
-
-  const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
-  const [list, setList] = useState(null);
-  const [showResult, setShowResult] = useState(true)
-  const [result, setResult] = useState({grammatik: "CLICK ", deutsch: "SHOW"})
+  
 
   useEffect(() => {
     console.log('---------------------effect run---')

@@ -70,11 +70,17 @@ export const pickSomething = async () => {
 export async function handleSave(tablename, table) {
   const storage = await getDataArr(['username', 'hash'])
   url = `vocab/table/save?user=${storage.username}&hash=${storage.hash}&table=${tablename}`
-  apirequestPOST(url, table)
+  console.log(table)
+  if (table == null || table == undefined){
+    apirequestPOST(url, {})
+  } else {
+    apirequestPOST(url, table)
+  }  
+  
 }
 
 
-async function storeData(key, data) {
+export async function storeData(key, data) {
   try {
     await AsyncStorage.setItem(String(key), String(data));
     console.log('Data stored successfully', key, data);
@@ -128,7 +134,7 @@ export async function getData(key, callback) {
     console.log('Error retrieving data: ', error);
     return 'error'
   }
-  };
+};
 
 export async function LogginDataStored(){
   return new Promise(async (resolve, reject) => {
@@ -273,7 +279,7 @@ async function apirequestPOST(url, content, autoGetReq = true) {
           }
           
         } else {
-          console.error('Fehler beim Erstellen des Push-Abonnements:', response.status);
+          console.error('Fehler beim Erstellen des Push-Abonnements:',url, response.status);
         }
       })
       //Eroor catch

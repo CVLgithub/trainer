@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable, TextInput } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as func from '../functions.js'
-import { Slider, Icon } from "@rneui/base";
-import { SymbolView, SymbolViewProps, SFSymbol } from 'expo-symbols';
+import { useSharedValue } from 'react-native-reanimated';
+import { Slider } from 'react-native-awesome-slider';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import PopUp from '../components/PopUp';
 
@@ -58,9 +57,14 @@ const LoginWindow = ({ navigation, route }) => {
     effektFunktion();
   }, []);
 
+  
+  const progress = useSharedValue(3);
+  const min = useSharedValue(1);
+  const max = useSharedValue(10);
 
   return(
-    <View style = {styles.container}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style = {styles.container}>
       <View style = {styles.login}>
 
         {user != 'undefined' && <Text style = {styles.text}> logged in as: '{user}'</Text>}
@@ -103,29 +107,11 @@ const LoginWindow = ({ navigation, route }) => {
         <View style = {styles.coloumn}>
           <Row>
             <Text>{learnedAt}</Text>
-            <Slider
-              animationType="timing"
-              maximumTrackTintColor="#ccc"
-              maximumValue={10}
-              minimumTrackTintColor="#222"
-              minimumValue={2}
-              allowTouchTrack
-              onSlidingComplete={(value) => {
-                //setLearnedAt(value)
-                func.storeData('learnedAb', value)
-                setLearnedAt(value)
-                console.log('new value:', value)
-                func.setOptions({'learnedAb': value})
-                }
-              }
-              orientation="horizontal"
-              step={1}
-              style={{flex: 1, margin: 10}}
-              thumbStyle={{ height: 15, width: 15}}
-              thumbTintColor="#0c0"
-              thumbTouchSize={{ width: 8, height: 8 }}
-              trackStyle={{ height: 8, borderRadius: 1 }}
-              value={learnedAt}
+            <Slider   
+              progress={progress}
+              minimumValue={min}
+              maximumValue={max}
+              step={9}
             />
           </Row>
         </View>
@@ -137,6 +123,8 @@ const LoginWindow = ({ navigation, route }) => {
         
       {popUp}    
     </View>
+    </GestureHandlerRootView>
+    
     
   )             
 }
