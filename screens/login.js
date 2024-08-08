@@ -7,10 +7,22 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import PopUp from '../components/PopUp';
 
+
 const screenHeight = Dimensions.get('window').height; //full height
+const screenWidth = Dimensions.get('window').width; //full width
+
+
+const Width = screenWidth - 20
 
 const Row = ({ children }) => (
-  <View style={styles.row}>{children}</View>
+  <View style={styles.row}>
+    <View width={Width/2}>
+      {children[0]}
+    </View>
+    <View flex={1}>
+      {children[1]}
+    </View>
+  </View>
 )
 
 
@@ -47,20 +59,32 @@ const LoginWindow = ({ navigation, route }) => {
   const [user, setUser] = useState('test')
   const callback = () => {console.log('callbackrun'), navigation.navigate("main", Math.random())}
   const [learnedAt, setLearnedAt] = useState()
+  const [slider, setSlider] = useState(<Text>Loading...</Text>)
+
+  const progress = useSharedValue(3);
+  const min = useSharedValue(1);
+  const max = useSharedValue(10);
+
 
   useEffect(() => {
     async function effektFunktion() {
       const storedData = await func.getDataArr(['username', 'learnedAb']);
       setUser(storedData.username)
       setLearnedAt(storedData.learnedAb)
+      
+      progress.value = learnedAt;
+      
+      setSlider(<Slider   
+        progress={progress}
+        minimumValue={min}
+        maximumValue={max}
+        step={9}
+      />)
     }
     effektFunktion();
   }, []);
 
   
-  const progress = useSharedValue(3);
-  const min = useSharedValue(1);
-  const max = useSharedValue(10);
 
   return(
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -96,17 +120,19 @@ const LoginWindow = ({ navigation, route }) => {
 
       <View style = {styles.Grid}>
         
-        <View style = {styles.coloumn}>
+        <Row>
+          <Text>Gelernt ab:</Text>
+          <Text>{learnedAt}</Text>
+        </Row>
+        <Row>
+          <Text>Gelernt ab:</Text>
+          {slider}
+        </Row>
+
+
+        {/* <View style = {styles.coloumn}>
           <Row>
-            <Text>Gelernt ab:</Text>
             
-          </Row>
-        </View>
-
-
-        <View style = {styles.coloumn}>
-          <Row>
-            <Text>{learnedAt}</Text>
             <Slider   
               progress={progress}
               minimumValue={min}
@@ -114,7 +140,7 @@ const LoginWindow = ({ navigation, route }) => {
               step={9}
             />
           </Row>
-        </View>
+        </View> */}
         
 
       </View>
@@ -166,7 +192,6 @@ const styles = StyleSheet.create({
       margin: 10,
       flex: 2,
       borderWidth: 1,
-      flexDirection: 'row',
     },
     SaveButton: {
       backgroundColor: 'black'
@@ -175,8 +200,10 @@ const styles = StyleSheet.create({
       backgroundColor: 'green'
     },
     row: {
+      flex: 1,
       flexDirection: "row",
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      maxHeight: 25,
     },
     coloumn: {
       margin: 10,
