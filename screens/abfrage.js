@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 
-import VocabItem from '../components/vocabItem'
 import * as func from '../functions'
 import PopUp from '../components/PopUp';
 
@@ -19,13 +15,6 @@ const screenHeight = Dimensions.get('window').height; //full height
 
 const AbfrageView = ({ navigation, route }) => {
   const [popUp, setPopUp] = useState()
-
-  function save(){
-    console.log('-----------------saved--------------')
-    console.log(list)
-    func.handleSave(name, list)
-  }
-
   const { name } = route.params;
 
   const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
@@ -33,10 +22,31 @@ const AbfrageView = ({ navigation, route }) => {
   const [showResult, setShowResult] = useState(true)
   const [result, setResult] = useState({grammatik: "CLICK ", deutsch: "SHOW"})
 
+
+  useFocusEffect(
+    useCallback(() => {
+      // Code to run when the screen gains focus
+      return () => {
+        // Code to run when the screen loses focus
+        console.log('left screen')
+        save()
+      };
+    }, [])
+  )
+
+
+  function save(){
+    console.log('-----------------saved--------------')
+    console.log(list)
+    func.handleSave(name, list)
+  }
+
+  
+
   useEffect(() => {
     console.log('---------------------effect run---')
     navigation.setOptions({
-      headerRight: () => <Button onPress={() => save(list)} title='save'/>
+      headerRight: () => <Button onPress={() => save(list)} title='save'/>,
     })
     const fetchData = async () => {
       console.log('req func');
