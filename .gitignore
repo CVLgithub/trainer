@@ -35,6 +35,6 @@ yarn-error.*
 *.tsbuildinfo
 
 #Data
-%Programmdata%/
+%Programdata%/
 *.json
 babel.config.js
