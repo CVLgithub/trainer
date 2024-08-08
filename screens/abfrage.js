@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 
-import VocabItem from '../components/vocabItem'
 import * as func from '../functions'
 import PopUp from '../components/PopUp';
 
@@ -19,6 +15,21 @@ const screenHeight = Dimensions.get('window').height; //full height
 
 const AbfrageView = ({ navigation, route }) => {
   const [popUp, setPopUp] = useState()
+
+  useFocusEffect(
+    useCallback(() => {
+      // Code to run when the screen gains focus
+      return () => {
+        // Code to run when the screen loses focus
+        console.log('left ----------------------------------------------------')
+        const PopUpTitle = 'Unsaved Data'
+        const PopUpButton1 = {text: 'Save Now', func: () =>{console.log("Speichern ------------------")}}
+        const PopUpButton2 = {text: 'Leave anyways', func: () =>{console.log("cancel PopUp --------------------")}}
+        setPopUp(func.CreatePopUp(PopUpTitle, PopUpButton1, PopUpButton2, setPopUp))
+      };
+    }, [])
+  )
+
 
   function save(){
     console.log('-----------------saved--------------')
@@ -36,7 +47,7 @@ const AbfrageView = ({ navigation, route }) => {
   useEffect(() => {
     console.log('---------------------effect run---')
     navigation.setOptions({
-      headerRight: () => <Button onPress={() => save(list)} title='save'/>
+      headerRight: () => <Button onPress={() => save(list)} title='save'/>,
     })
     const fetchData = async () => {
       console.log('req func');
