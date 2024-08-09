@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView, Button, Pressable, TextInput } from 'react-native';
 import * as func from '../functions.js'
-import { useSharedValue } from 'react-native-reanimated';
+import Animated, { useSharedValue, useDerivedValue, runOnJS } from 'react-native-reanimated';
 import { Slider } from 'react-native-awesome-slider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -19,7 +19,7 @@ const Row = ({ children }) => (
     <View width={Width/2}>
       {children[0]}
     </View>
-    <View flex={1}>
+    <View flex={1} marginHorizontal={10}>
       {children[1]}
     </View>
   </View>
@@ -50,6 +50,14 @@ async function register(input, setPopUp, callback){
   /* console.log("'createHash in Login': NO VALID HASH - nothing stored") */
 }
 
+function handleSlider(value, setLearned){
+    //setLearnedAt(value)
+    func.storeData('learnedAb', value)
+    setLearned(value)
+    func.setOptions({'learnedAb': value})
+}
+
+
 
 const LoginWindow = ({ navigation, route }) => {
   //const { setCredentials } = route.params;
@@ -59,31 +67,43 @@ const LoginWindow = ({ navigation, route }) => {
   const [user, setUser] = useState('test')
   const callback = () => {console.log('callbackrun'), navigation.navigate("main", Math.random())}
   const [learnedAt, setLearnedAt] = useState()
-  const [slider, setSlider] = useState(<Text>Loading...</Text>)
+  const [slider, setSlider] = useState(<View></View>)
 
-  const progress = useSharedValue(3);
+  const progress = useSharedValue(3)
   const min = useSharedValue(1);
   const max = useSharedValue(10);
+  
+
+  const initSlider = () => {
+    setSlider(<Slider   
+      progress={progress}
+      minimumValue={min}
+      maximumValue={max}
+      step={9}
+      style={styles.slider}
+      onSlidingComplete={(x) =>{handleSlider(x, setLearnedAt)}}
+    />)
+  }
 
 
   useEffect(() => {
     async function effektFunktion() {
       const storedData = await func.getDataArr(['username', 'learnedAb']);
       setUser(storedData.username)
-      setLearnedAt(storedData.learnedAb)
-      
-      progress.value = learnedAt;
-      
-      setSlider(<Slider   
-        progress={progress}
-        minimumValue={min}
-        maximumValue={max}
-        step={9}
-      />)
+      setLearnedAt(Number(storedData.learnedAb))
     }
     effektFunktion();
   }, []);
 
+  useEffect(
+    () => {
+      if (learnedAt > 10 || learnedAt <= 0 || learnedAt == undefined) {console.log('out of bounds'); return}
+      progress.value = learnedAt
+      setTimeout(() => {
+        initSlider()
+      }, 1);
+    }, [learnedAt]
+  )
   
 
   return(
@@ -124,24 +144,11 @@ const LoginWindow = ({ navigation, route }) => {
           <Text>Gelernt ab:</Text>
           <Text>{learnedAt}</Text>
         </Row>
+
         <Row>
-          <Text>Gelernt ab:</Text>
+          <Text>Slider:</Text>
           {slider}
         </Row>
-
-
-        {/* <View style = {styles.coloumn}>
-          <Row>
-            
-            <Slider   
-              progress={progress}
-              minimumValue={min}
-              maximumValue={max}
-              step={9}
-            />
-          </Row>
-        </View> */}
-        
 
       </View>
 
@@ -208,6 +215,9 @@ const styles = StyleSheet.create({
     coloumn: {
       margin: 10,
       flex: 1
+    },
+    slider: {
+      //marginHorizontal: 20,
     }
     
 })
