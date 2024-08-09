@@ -20,7 +20,7 @@ const UploadView = ({ navigation, route}) => {
 
     return (
         <View style={styles.view}>
-            <Button title="Pick something" onPress={func.pickSomething} />
+            <Button title="Pick something" onPress={()=> func.pickSomething(navigation)} />
         </View>
     );
 };

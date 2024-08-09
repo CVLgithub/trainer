@@ -27,7 +27,7 @@ export function CreatePopUp(title, button1, button2, deleteSelf){
   return <PopUp title = {title} button1={{text: button1.text, func: button1.func}} button2={{text: button2.text, func: button2.func}} deleteSelf={deleteSelf}></PopUp>
 }
 
-export const pickSomething = async () => {
+export const pickSomething = async (nav) => {
   const storage = await getDataArr(['username', 'hash'])
   try {
     const docRes = await DocumentPicker.getDocumentAsync();
@@ -60,6 +60,7 @@ export const pickSomething = async () => {
       },
     });
     console.log('file send');
+    nav.navigate("main", Math.random())
   } catch (error) {
     console.log("Error while selecting file: ", error);
   }

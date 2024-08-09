@@ -226,3 +226,10 @@ const styles = StyleSheet.create({
 
 
 
+/* 
+
+  conf tabelle für neue nutzer erstellen
+
+
+
+*/
