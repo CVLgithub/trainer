@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Dimensions, StyleSheet, Text, View, Pressable } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 
 function pressed(name){
@@ -15,35 +16,72 @@ function setMsg(pct){
 }
 
 
-const VocabItem = ({name, Values = {lastlearned: '13.01.24', pctLearned: 0.45}, switchView}) => {
-    const itemTitle = name
-    const msg = setMsg(Values.pctLearned)
-    return(
-        <Pressable onPress={() => switchView(name)}>
-          <View style={styles.container} >
-            <View style={styles.titleContainer}>
-                <Text style={styles.title}>{itemTitle}</Text>
-            </View>
 
-            <View style={styles.subContainer}>
-                <Text>Zulezt gelernt am: {Values.lastlearned}</Text>
-                <Text>Du kannst schon {Values.pctLearned * 100}%</Text>
-                <Text>{msg}</Text>
-            </View>
+
+
+
+const VocabItem = ({ name, Values = { lastlearned: '13.01.24', pctLearned: 0.45 }, switchView }) => {
+    const borderColour = useSharedValue('black');
+    const borderWidth = useSharedValue(1)
+
+    const itemTitle = name;
+    const msg = setMsg(Values.pctLearned);
+
+    // Define the animated style for the border color
+    const animatedBorderStyle = useAnimatedStyle(() => {
+        return {
+            borderColor: borderColour.value,
+            borderWidth: borderWidth.value,
+        };
+    });
+
+    return (
+        <Pressable
             
-            </View>  
+            onPress={() => switchView(name)}
+            onPressIn={() => {
+                console.log('press in');
+                borderColour.value = withTiming('red', { duration: 200 });
+                borderWidth.value = withTiming(2.5, { duration: 200 })
+            }}
+            onPressOut={() => {
+                console.log('press out');
+                borderColour.value = withTiming('black', { duration: 150 });
+                borderWidth.value = withTiming(1, { duration: 150 })
+            }}
+        >
+            <Animated.View style={[animatedBorderStyle,styles.animated]}>
+                <View style={styles.container}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.title}>{itemTitle}</Text>
+                    </View>
+
+                    <View style={styles.subContainer}>
+                        <Text>Zuletzt gelernt am: {Values.lastlearned}</Text>
+                        <Text>Du kannst schon {Values.pctLearned * 100}%</Text>
+                        <Text>{msg}</Text>
+                    </View>
+                </View>
+            </Animated.View>
+            
         </Pressable>
-        
-    )
-}
+    );
+};
+
 export default VocabItem
 
 const styles = StyleSheet.create({
+    animated: {
+        borderRadius: 15,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        margin: 10,
+        
+    },
     container: {
         height: 200,
         width: 150,
         backgroundColor: '#dfdfdf',
-        margin: 10,
         borderRadius: 15,
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
@@ -64,3 +102,8 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
 })
+
+
+
+
+

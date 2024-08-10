@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, View, Pressable } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 
 function pressed(name){
@@ -8,18 +9,51 @@ function pressed(name){
 
 
 const UploadCard = ({switchView}) => {
-    return(
-        <Pressable onPress={() => switchView('upload')}>
-            <View style={styles.container} >
+    const borderColour = useSharedValue('black');
+    const borderWidth = useSharedValue(1)
+
+
+
+    const UploadCardNoAnimation = React.forwardRef(() => {
+
+        const animatedBorderStyle = useAnimatedStyle(() => {
+            return {
+                borderColor: borderColour.value,
+                borderWidth: borderWidth.value,
+            };
+        });
+
+        return(
+        <Pressable 
+            onPress={() => 
+                switchView('upload')
+            } 
+            onPressIn={() => {
+                console.log('press in');
+                borderColour.value = withTiming('red', { duration: 200 });
+                borderWidth.value = withTiming(2.5, { duration: 200 })
+            }}
+            onPressOut={() => {
+                console.log('press out');
+                borderColour.value = withTiming('black', { duration: 150 });
+                borderWidth.value = withTiming(1, { duration: 150 })
+            }}
+        >
+            <Animated.View style={[styles.container, animatedBorderStyle]} >
                 <Image
                     style={styles.icon}
                     source={{
                         uri: 'https://cdn-icons-png.flaticon.com/128/8162/8162972.png',
                     }}
                 />
-            </View>  
-        </Pressable>
-        
+            </Animated.View>  
+        </Pressable> 
+        )
+    })
+    
+    const AnimatedUploadCard = Animated.createAnimatedComponent(UploadCardNoAnimation) 
+    return (
+        <AnimatedUploadCard/>
     )
 }
 export default UploadCard
