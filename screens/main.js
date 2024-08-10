@@ -116,11 +116,16 @@ async function setup(createComponents, goToLogin, setPopUp, navigation){
 
   console.log("Setup")
   const apiResult = (await func.resolveLogin(LoginData))
-  console.log('result',apiResult)
+  if (!apiResult){
+    navigation.navigate("login", true)
+  } else {
+     console.log('result :',apiResult)
   const [ListOfVocabNames,VocabDic, options] = apiResult
 
   resolveOptions(options)
   createComponents(VocabDic)
+  }
+ 
 }
   
   
