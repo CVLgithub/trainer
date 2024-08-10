@@ -62,6 +62,10 @@ function handleSlider(value, setLearned){
 
 
 const LoginWindow = ({ navigation, route }) => {
+  
+
+
+
   //const { setCredentials } = route.params;
   const [popUp, setPopUp] = useState()
   const [username, onChangeUsername] = useState('');
@@ -105,6 +109,12 @@ const LoginWindow = ({ navigation, route }) => {
 
   useEffect(() => {
     async function effektFunktion() {
+        const logOut = route.params
+        if (logOut){
+          console.log('session expired: Log in again')
+          func.store({username: undefined, password: undefined, hash: undefined},callback)
+        }
+        
       const storedData = await func.getDataArr(['username', 'learnedAb']);
       setUser(storedData.username)
       setLearnedAt(Number(storedData.learnedAb))
@@ -129,7 +139,11 @@ const LoginWindow = ({ navigation, route }) => {
         <View style = {styles.welcomeConatiner}>
             <View style={styles.welcome}>
                 <Text style={styles.msg}>Willkommen</Text>
-                {user != 'undefined' && <Text style = {styles.userName}>{user}</Text>}
+                {user != 'undefined' ? (
+                  <Text style={styles.userName}>{user}</Text>
+                ) : (
+                  <Text style={styles.userName}>Bitte anmelden:</Text>
+                )}
             </View>
             <View style={styles.sunImageConatiner}>
               <SymbolView name={'sun.max.fill'} style={styles.symbol} colors={['ffca28', 'black']} type={'palette'} />

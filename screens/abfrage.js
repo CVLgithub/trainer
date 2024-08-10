@@ -18,7 +18,7 @@ const AbfrageView = ({ navigation, route }) => {
   const { name } = route.params;
 
   const [question, setQuestion] = useState({ id: -1, latein: 'Waiting for response' });
-  const [list, setList] = useState(null);
+  const [list, setList] = useState(undefined);
   const [showResult, setShowResult] = useState(true)
   const [result, setResult] = useState({grammatik: "CLICK ", deutsch: "SHOW"})
 
@@ -38,15 +38,21 @@ const AbfrageView = ({ navigation, route }) => {
   function save(){
     console.log('-----------------saved--------------')
     console.log(list)
+    console.log(question)
     func.handleSave(name, list)
   }
 
+  useEffect(() => {
+    navigation.setOptions({
+        headerRight: () => <Button onPress={() => save()} title='save' />,
+    });
+}, [list]);
   
 
   useEffect(() => {
-    console.log('---------------------effect run---')
+    //console.log('---------------------effect run---')
     navigation.setOptions({
-      headerRight: () => <Button onPress={() => save(list)} title='save'/>,
+      headerRight: () => <Button onPress={() => console.log(list)} title='save'/>,
     })
     const fetchData = async () => {
       console.log('req func');
@@ -62,14 +68,14 @@ const AbfrageView = ({ navigation, route }) => {
 
   const UpdateQuestion = () => {
     console.log("update question");
-    console.log(question);
+    console.log(list);
     const nextQuestion = list.find(item => item.id === question.id + 1);
     if (nextQuestion) {
       setQuestion(nextQuestion);
     } else {
-      save(list)
+      save()
 
-      const PopUpTitle = 'Finished learning'
+      const PopUpTitle = 'Finished Learning \n - Progress Saved - '
       const PopUpButton1 = {text: 'Restart', func:  () =>{setQuestion({ id: -1, latein: 'start' }); setShowResult(false)}}
       const PopUpButton2 = {text: 'Go Back', func: () =>{navigation.navigate("main")}}
       setPopUp(func.CreatePopUp(PopUpTitle, PopUpButton1, PopUpButton2, setPopUp))
