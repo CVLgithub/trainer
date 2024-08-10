@@ -4,6 +4,8 @@ import * as func from '../functions.js'
 import Animated, { useSharedValue, useDerivedValue, runOnJS } from 'react-native-reanimated';
 import { Slider } from 'react-native-awesome-slider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SymbolView, SymbolViewProps, SFSymbol } from 'expo-symbols';
+
 
 import PopUp from '../components/PopUp';
 
@@ -82,6 +84,21 @@ const LoginWindow = ({ navigation, route }) => {
       step={9}
       style={styles.slider}
       onSlidingComplete={(x) =>{handleSlider(x, setLearnedAt)}}
+      theme={{
+        disableMinTrackTintColor: '#fff',
+        maximumTrackTintColor: '#fff',
+        minimumTrackTintColor: '#000',
+        cacheTrackTintColor: '#333',
+        bubbleBackgroundColor: '#666',
+        heartbeatColor: '#999',
+      }}
+      markStyle={{
+        width: 1,
+        height: 5,
+        backgroundColor: '#fff',
+        position: 'absolute',
+        //top: -2
+        }}
     />)
   }
 
@@ -109,48 +126,54 @@ const LoginWindow = ({ navigation, route }) => {
   return(
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style = {styles.container}>
-      <View style = {styles.login}>
-
-        {user != 'undefined' && <Text style = {styles.text}> logged in as: '{user}'</Text>}
-
-        <View style = {styles.inputContainer}>
-          <TextInput
-              style={styles.TextInput}
-              onChangeText={onChangeUsername}
-              value={username}
-              placeholder="username"
-          />
-          <TextInput
-              style={styles.TextInput}
-              onChangeText={onChangePassword}
-              value={password}
-              placeholder="Password"
-          />
+        <View style = {styles.welcomeConatiner}>
+            <View style={styles.welcome}>
+                <Text style={styles.msg}>Willkommen</Text>
+                {user != 'undefined' && <Text style = {styles.userName}>{user}</Text>}
+            </View>
+            <View style={styles.sunImageConatiner}>
+              <SymbolView name={'sun.max.fill'} style={styles.symbol} colors={['ffca28', 'black']} type={'palette'} />
+            </View>
         </View>
-
-          <View style  = {styles.buttonContainer}>
-            <Button title='Login' style = {styles.Button} onPress={() => {storeHash({username: username, password: password},callback)}}></Button>
-            <Button title='Log out' style = {styles.Button} onPress={() => {func.store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>
-            <Button title='Register' style = {styles.Button} onPress={() => {register({username: username, password: password},setPopUp,callback)}}></Button>               
+        <View style = {styles.login}>
+          <View style = {styles.inputContainer}>
+            <TextInput
+                style={styles.TextInput}
+                onChangeText={onChangeUsername}
+                value={username}
+                placeholder="Username"
+            />
+            <TextInput
+                style={styles.TextInput}
+                onChangeText={onChangePassword}
+                value={password}
+                placeholder="Password"
+            />
           </View>
 
-      </View>
+            <View style  = {styles.buttonContainer}>
+              <Button title='Login' style = {styles.Button} onPress={() => {storeHash({username: username, password: password},callback)}}></Button>
+              <Button title='Log out' style = {styles.Button} onPress={() => {func.store({username: undefined, password: undefined, hash: undefined},callback)}}></Button>
+              <Button title='Register' style = {styles.Button} onPress={() => {register({username: username, password: password},setPopUp,callback)}}></Button>               
+            </View>
+
+        </View>
       
         
 
-      <View style = {styles.Grid}>
-        
-        <Row>
-          <Text>Gelernt ab:</Text>
-          <Text>{learnedAt}</Text>
-        </Row>
+        <View style = {styles.Grid}>
+          
+          <Row>
+            <Text>Gelernt ab:</Text>
+            <Text>{learnedAt}</Text>
+          </Row>
 
-        <Row>
-          <Text>Slider:</Text>
-          {slider}
-        </Row>
+          <Row>
+            <Text>Slider:</Text>
+            {slider}
+          </Row>
 
-      </View>
+        </View>
 
         
         
@@ -166,6 +189,41 @@ export default LoginWindow
 const styles = StyleSheet.create({
     container: {
       height: screenHeight,
+    },
+    welcomeConatiner: {
+      alignSelf: 'center',
+      margin: 10,
+      //backgroundColor: 'green',
+      height: 75,
+      flexDirection: 'row',
+      
+      borderBottomWidth: 1,
+    },
+    welcome: {
+      //backgroundColor: 'blue',
+      flex: 1,
+    },
+    msg: {
+      //backgroundColor: 'red',
+      fontSize: 35,
+    },
+    userName: {
+      marginTop: 5,
+      //backgroundColor: 'pink',
+      fontSize: 20,
+    },
+    sunImageConatiner: {
+      //backgroundColor: 'white',
+      width: 75,
+      marginHorizontal: 25,
+      justifyContent: 'center'
+    },
+    symbol: {
+      alignSelf: 'center',
+      height: 48,
+      width: 48,
+      marginBottom: 15
+      
     },
     TextInput: {
         paddingLeft: 10,
@@ -222,14 +280,3 @@ const styles = StyleSheet.create({
     
 })
 
-
-
-
-
-/* 
-
-  conf tabelle für neue nutzer erstellen
-
-
-
-*/
