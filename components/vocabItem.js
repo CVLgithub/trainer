@@ -23,6 +23,7 @@ function setMsg(pct){
 const VocabItem = ({ name, Values = { lastlearned: '13.01.24', pctLearned: 0.45 }, switchView }) => {
     const borderColour = useSharedValue('black');
     const borderWidth = useSharedValue(1)
+    const padding = useSharedValue(2.5)
 
     const itemTitle = name;
     const msg = setMsg(Values.pctLearned);
@@ -32,6 +33,7 @@ const VocabItem = ({ name, Values = { lastlearned: '13.01.24', pctLearned: 0.45 
         return {
             borderColor: borderColour.value,
             borderWidth: borderWidth.value,
+            padding: padding.value,
         };
     });
 
@@ -42,16 +44,18 @@ const VocabItem = ({ name, Values = { lastlearned: '13.01.24', pctLearned: 0.45 
             onPressIn={() => {
                 console.log('press in');
                 borderColour.value = withTiming('red', { duration: 200 });
-                borderWidth.value = withTiming(2.5, { duration: 200 })
+                borderWidth.value = withTiming(2.5, { duration: 200 });
+                padding.value = withTiming(1, { duration: 200 })
             }}
             onPressOut={() => {
                 console.log('press out');
                 borderColour.value = withTiming('black', { duration: 150 });
                 borderWidth.value = withTiming(1, { duration: 150 })
+                padding.value = withTiming(2.5, { duration: 200 })
             }}
         >
-            <Animated.View style={[animatedBorderStyle,styles.animated]}>
-                <View style={styles.container}>
+           
+                <Animated.View style={[animatedBorderStyle, styles.container]}>
                     <View style={styles.titleContainer}>
                         <Text style={styles.title}>{itemTitle}</Text>
                     </View>
@@ -61,8 +65,8 @@ const VocabItem = ({ name, Values = { lastlearned: '13.01.24', pctLearned: 0.45 
                         <Text>Du kannst schon {Values.pctLearned * 100}%</Text>
                         <Text>{msg}</Text>
                     </View>
-                </View>
-            </Animated.View>
+                </Animated.View>
+            
             
         </Pressable>
     );
@@ -79,6 +83,7 @@ const styles = StyleSheet.create({
         
     },
     container: {
+        margin: 10,
         height: 200,
         width: 150,
         backgroundColor: '#dfdfdf',

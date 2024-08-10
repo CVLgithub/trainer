@@ -46,7 +46,7 @@ const AbfrageView = ({ navigation, route }) => {
   useEffect(() => {
     console.log('---------------------effect run---')
     navigation.setOptions({
-      headerRight: () => <Button onPress={() => save(list)} title='save'/>,
+      headerRight: () => <Button onPress={() => save()} title='save'/>,
     })
     const fetchData = async () => {
       console.log('req func');
@@ -67,7 +67,7 @@ const AbfrageView = ({ navigation, route }) => {
     if (nextQuestion) {
       setQuestion(nextQuestion);
     } else {
-      save(list)
+      save()
 
       const PopUpTitle = 'Finished learning'
       const PopUpButton1 = {text: 'Restart', func:  () =>{setQuestion({ id: -1, latein: 'start' }); setShowResult(false)}}
@@ -228,3 +228,6 @@ nextButton: {
     backgroundColor: 'black',
 },
 })
+
+
+//update save
